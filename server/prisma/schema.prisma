@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  id      Int             @id @default(autoincrement())
+  domain  String          @unique
+  brand   String
+  model   String
+  mileage Int
+  status  VehicleStatus
+  drivers DriverVehicle[]
+  trips   Trip[]
+  Service Service[]
+
+  @@map("vehicle")
+}
+
+model Driver {
+  id            Int             @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  dni           String          @unique
+  licenseType   LicenseType
+  licenseExpiry DateTime
+  vehicles      DriverVehicle[]
+  trips         Trip[]
+
+  @@map("driver")
+}
+
+model DriverVehicle {
+  id        Int     @id @default(autoincrement())
+  driverId  Int
+  vehicleId Int
+  driver    Driver  @relation(fields: [driverId], references: [id])
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@map("driver_vehicle")
+}
+
+model Price {
+  id         Int   @id @default(autoincrement())
+  pricePerKm Float
+  month      Int
+  year       Int
+
+  @@map("price")
+}
+
+model Trip {
+  id        Int      @id @default(autoincrement())
+  driverId  Int
+  vehicleId Int
+  distance  Float
+  startDate DateTime
+  endDate   DateTime
+  driver    Driver   @relation(fields: [driverId], references: [id])
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  @@map("trip")
+}
+
+model Service {
+  id        Int      @id @default(autoincrement())
+  vehicleId Int
+  date      DateTime
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  @@map("service")
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_REPAIR
+}
+
+enum LicenseType {
+  PERSONAL
+  PROFESSIONAL
+}
