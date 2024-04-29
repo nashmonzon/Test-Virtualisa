@@ -1,7 +1,5 @@
 "use client";
 
-import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import SortBtn from "@/components/ui/button-sort";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -46,7 +44,10 @@ export const columns: ColumnDef<Trips>[] = [
   },
   {
     accessorKey: "firstName",
-    header: "Name",
+    header: ({ column }) => {
+      return <SortBtn label="Name" column={column} />;
+    },
+
     cell: ({ row }) => {
       const value = row.original;
 
@@ -55,7 +56,10 @@ export const columns: ColumnDef<Trips>[] = [
   },
   {
     accessorKey: "lastName",
-    header: "Last Name",
+    header: ({ column }) => {
+      return <SortBtn label="Last Name" column={column} />;
+    },
+
     cell: ({ row }) => {
       const value = row.original;
 
@@ -64,7 +68,10 @@ export const columns: ColumnDef<Trips>[] = [
   },
   {
     accessorKey: "brand",
-    header: "Brand",
+    header: () => {
+      return <div className="px-4">Brand</div>;
+    },
+
     cell: ({ row }) => {
       const value = row.original;
 
@@ -73,7 +80,10 @@ export const columns: ColumnDef<Trips>[] = [
   },
   {
     accessorKey: "model",
-    header: "Model",
+    header: () => {
+      return <div className="px-4">Model</div>;
+    },
+
     cell: ({ row }) => {
       const value = row.original;
 
@@ -82,7 +92,10 @@ export const columns: ColumnDef<Trips>[] = [
   },
   {
     accessorKey: "domain",
-    header: "Plate",
+    header: () => {
+      return <div className="px-4">Plate</div>;
+    },
+
     cell: ({ row }) => {
       const value = row.original;
 

@@ -51,6 +51,8 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  console.log(data);
+
   return (
     <>
       <div className="flex flex-row items-center justify-end mb-3 ">

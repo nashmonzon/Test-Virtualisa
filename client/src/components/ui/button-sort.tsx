@@ -4,7 +4,7 @@ import { Button } from "./button";
 import { Icons } from "../icons";
 import { cn } from "@/lib/utils";
 
-export function SortBtn<T>({
+export default function SortBtn<T>({
   label,
   column,
 }: {
@@ -24,5 +24,3 @@ export function SortBtn<T>({
     </>
   );
 }
-
-export default SortBtn;
