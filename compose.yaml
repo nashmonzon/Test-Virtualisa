@@ -11,6 +11,12 @@ services:
       - 4000:4000
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+    volumes:
+      - type: bind
+        source: ./server   # Ruta al directorio de tu aplicación en la máquina host
+        target: /app        # Ruta al directorio en el contenedor donde se montará el directorio de la aplicación
+      - /app/node_modules  # Asegura que los módulos de node no se monten sobre el host para evitar conflictos
+    working_dir: /app     
   db:
     container_name: db
     image: postgres:15.1-alpine
