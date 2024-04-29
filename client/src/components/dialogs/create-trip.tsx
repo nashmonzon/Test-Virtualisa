@@ -11,7 +11,6 @@ import { DialogHeader } from "../ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Input as InputType, INPUTS_TYPES } from "@/types/inputsTypes";
 
-import { Drivers } from "@/app/drivers/columns";
 import {
   Form,
   FormControl,
@@ -22,9 +21,10 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import { Trips } from "@/app/trips/columns";
 
 function CreateDriver() {
-  const form = useForm<Drivers>({});
+  const form = useForm<Trips>({});
   const {
     handleSubmit,
     formState: { isDirty },
@@ -33,14 +33,14 @@ function CreateDriver() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<Drivers> = async (data) => {
+  const onSubmit: SubmitHandler<Trips> = async (data) => {
     console.log(data);
   };
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Add driver</DialogTitle>
+          <DialogTitle>New Trip</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
         {DRIVER_REGISTER.map(({ name, label, props }) => {
@@ -56,7 +56,6 @@ function CreateDriver() {
                   <FormLabel className={"font-bold"}>{label}</FormLabel>
 
                   <FormControl>
-                    {/* @ts-expect-error too many props */}
                     <Input {...field} />
                   </FormControl>
 
@@ -89,7 +88,7 @@ function CreateDriver() {
   );
 }
 
-export const DRIVER_REGISTER: InputType<keyof Drivers>[] = [
+export const DRIVER_REGISTER: InputType<keyof Trips>[] = [
   {
     label: "First name",
     name: "firstName",
@@ -100,28 +99,28 @@ export const DRIVER_REGISTER: InputType<keyof Drivers>[] = [
     name: "lastName",
     props: { type: INPUTS_TYPES.Text, required: true },
   },
-  {
-    label: "Dni",
-    name: "dni",
-    props: { type: INPUTS_TYPES.Phone, required: true },
-  },
+  // {
+  //   label: "Dni",
+  //   name: "dni",
+  //   props: { type: INPUTS_TYPES.Phone, required: true },
+  // },
 
-  {
-    label: "License Type",
-    name: "licenseType",
-    props: {
-      type: INPUTS_TYPES.Text,
-      required: true,
-    },
-  },
-  {
-    label: "License Expiry",
-    name: "licenseExpiry",
-    props: {
-      type: INPUTS_TYPES.Text,
-      required: true,
-    },
-  },
+  // {
+  //   label: "License Type",
+  //   name: "licenseType",
+  //   props: {
+  //     type: INPUTS_TYPES.Text,
+  //     required: true,
+  //   },
+  // },
+  // {
+  //   label: "License Expiry",
+  //   name: "licenseExpiry",
+  //   props: {
+  //     type: INPUTS_TYPES.Text,
+  //     required: true,
+  //   },
+  // },
 ];
 
 export default CreateDriver;

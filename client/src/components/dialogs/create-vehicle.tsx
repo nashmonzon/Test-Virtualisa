@@ -11,7 +11,6 @@ import { DialogHeader } from "../ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Input as InputType, INPUTS_TYPES } from "@/types/inputsTypes";
 
-import { Drivers } from "@/app/drivers/columns";
 import {
   Form,
   FormControl,
@@ -22,9 +21,10 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import { type Vehicles } from "@/app/vehicles/columns";
 
-function CreateDriver() {
-  const form = useForm<Drivers>({});
+function CreateVehicle() {
+  const form = useForm<Vehicles>({});
   const {
     handleSubmit,
     formState: { isDirty },
@@ -33,17 +33,17 @@ function CreateDriver() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<Drivers> = async (data) => {
+  const onSubmit: SubmitHandler<Vehicles> = async (data) => {
     console.log(data);
   };
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Add driver</DialogTitle>
+          <DialogTitle>Add Vehicle</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
-        {DRIVER_REGISTER.map(({ name, label, props }) => {
+        {VEHICLE_REGISTER.map(({ name, label, props }) => {
           const { type, data, required } = props || {};
 
           return (
@@ -89,39 +89,22 @@ function CreateDriver() {
   );
 }
 
-export const DRIVER_REGISTER: InputType<keyof Drivers>[] = [
+export const VEHICLE_REGISTER: InputType<keyof Vehicles>[] = [
   {
-    label: "First name",
-    name: "firstName",
+    label: "Plate",
+    name: "domain",
     props: { type: INPUTS_TYPES.Text, required: true },
   },
   {
-    label: "Last name",
-    name: "lastName",
+    label: "Brand",
+    name: "brand",
     props: { type: INPUTS_TYPES.Text, required: true },
   },
   {
-    label: "Dni",
-    name: "dni",
+    label: "Model",
+    name: "model",
     props: { type: INPUTS_TYPES.Phone, required: true },
-  },
-
-  {
-    label: "License Type",
-    name: "licenseType",
-    props: {
-      type: INPUTS_TYPES.Text,
-      required: true,
-    },
-  },
-  {
-    label: "License Expiry",
-    name: "licenseExpiry",
-    props: {
-      type: INPUTS_TYPES.Text,
-      required: true,
-    },
   },
 ];
 
-export default CreateDriver;
+export default CreateVehicle;
