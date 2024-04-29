@@ -2,9 +2,11 @@ import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns, type Trips } from "./columns";
 import Container from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
 import { PageProps } from "@/types/types";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 async function getData(): Promise<Trips[]> {
   // Fetch data from your API here.
@@ -79,8 +81,21 @@ export default async function Trips({ searchParams }: PageProps) {
     <Container>
       <div className="mb-5  flex items-center justify-between gap-2  mt-4">
         <h2 className="page-title text-primary">TRIPS</h2>
-        <div className="flex gap-4">
-          <Button>Add Driver</Button>
+        <div className="flex gap-4 items-center">
+          <Link
+            href={`/drivers/add-driver`}
+            className={cn(
+              "capitalize",
+              "hover:text-primary-foreground",
+              "bg-[#ac5b96] text-primary-foreground",
+              buttonVariants({
+                size: "sm",
+                variant: "ghost",
+              })
+            )}
+          >
+            New Trip
+          </Link>
           <SearchBar to={`/trips`} placeholder="Search a driver" />
         </div>
       </div>

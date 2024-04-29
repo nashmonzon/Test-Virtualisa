@@ -1,27 +1,28 @@
 "use client";
 
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
 import CreateDriver from "./dialogs/create-driver";
 import Modal from "./modal";
+import { CreateType } from "@/types/enums";
+import CreateVehicle from "./dialogs/create-vehicle";
 
-export enum CreateType {
-  CreateDriver = "create-driver",
-}
-
-interface ProjectDialogProps {
+interface CreateDialogProps {
   id?: string;
   type: CreateType;
+  to: string;
 }
 
-function GenericModal(props: ProjectDialogProps) {
+function GenericModal(props: CreateDialogProps) {
   const router = useRouter();
+  const { to } = props;
+
   const onOpenChange = (open: boolean) => {
     if (!open) {
-      router.push(`/drivers`);
+      router.push(to);
     }
   };
 
@@ -39,6 +40,12 @@ function GenericModal(props: ProjectDialogProps) {
 const DialogContent = ({ type, id }: { type: CreateType; id?: string }) => {
   if (type === CreateType.CreateDriver) {
     return <CreateDriver />;
+  }
+  if (type === CreateType.CreateVehicle) {
+    return <CreateVehicle />;
+  }
+  if (type === CreateType.CreateTrip) {
+    return <CreateVehicle />;
   }
 
   return <div>DEFAULT CASE</div>;

@@ -3,8 +3,10 @@ import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns, type Vehicles } from "./columns";
 import { PageProps } from "@/types/types";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 async function getData(): Promise<Vehicles[]> {
   return [
@@ -58,8 +60,21 @@ export default async function Vehicles({ searchParams }: PageProps) {
     <Container>
       <div className="mb-5  flex items-center justify-between gap-2  mt-4">
         <h2 className="page-title text-primary">VEHICLES</h2>
-        <div className="flex gap-4">
-          <Button>Add Vehicles</Button>
+        <div className="flex gap-4 items-center">
+          <Link
+            href={`/vehicles/add-vehicle`}
+            className={cn(
+              "capitalize",
+              "hover:text-primary-foreground",
+              "bg-[#ac5b96] text-primary-foreground",
+              buttonVariants({
+                size: "sm",
+                variant: "ghost",
+              })
+            )}
+          >
+            Add Vehicles
+          </Link>
           <SearchBar to={`/vehicles`} placeholder="Search a Plate" />
         </div>
       </div>
