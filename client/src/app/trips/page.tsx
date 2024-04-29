@@ -2,6 +2,9 @@ import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns, type Trips } from "./columns";
 import Container from "@/components/ui/container";
+import { Button } from "@/components/ui/button";
+import SearchBar from "@/components/ui/search-bar";
+import { PageProps } from "@/types/types";
 
 async function getData(): Promise<Trips[]> {
   // Fetch data from your API here.
@@ -69,18 +72,23 @@ async function getData(): Promise<Trips[]> {
   ];
 }
 
-export default async function Trips() {
+export default async function Trips({ searchParams }: PageProps) {
   const data = await getData();
+  const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
   return (
     <Container>
-      <div className="mb-5 flex flex-col items-center justify-between gap-2 sm:flex-row mt-4">
-        <h2 className="page-title">Trips</h2>
+      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
+        <h2 className="page-title text-primary">TRIPS</h2>
+        <div className="flex gap-4">
+          <Button>Add Driver</Button>
+          <SearchBar to={`/trips`} placeholder="Search a driver" />
+        </div>
       </div>
       <DataTable
         columns={columns}
         data={data}
         filter={"lastName"}
-        placeholder="Search a Last name"
+        searchBy={searchBy}
       />
     </Container>
   );
