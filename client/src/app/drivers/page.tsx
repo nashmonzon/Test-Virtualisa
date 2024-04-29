@@ -2,6 +2,11 @@ import Container from "@/components/ui/container";
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns, type Drivers } from "./columns";
+import { Button, buttonVariants } from "@/components/ui/button";
+import SearchBar from "@/components/ui/search-bar";
+import { PageProps } from "@/types/types";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 export enum LicenseType {
   PERSONAL,
   PROFESSIONAL,
@@ -11,7 +16,7 @@ export enum Status {
   notApruve,
 }
 
-async function getData(): Promise<Drivers[]> {
+export async function getData(): Promise<Drivers[]> {
   // Fetch data from your API here.
   return [
     {
@@ -67,18 +72,40 @@ async function getData(): Promise<Drivers[]> {
   ];
 }
 
-export default async function Drivers() {
+export default async function Drivers({ searchParams }: PageProps) {
   const data = await getData();
+  const id = searchParams?.id ? String(searchParams.id) : "";
+  const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
+
   return (
-    <Container>
-      <div className="mb-5 flex flex-col items-center justify-between gap-2 sm:flex-row mt-4">
-        <h2 className="page-title">Drivers</h2>
+    <Container className="sm:px-5">
+      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
+        <h2 className="page-title text-primary">DRIVERS</h2>
+        <div className="flex gap-4 items-center">
+          <Link
+            href={`/drivers/add-driver`}
+            className={cn(
+              "capitalize",
+              "hover:text-primary-foreground",
+              "bg-[#ac5b96] text-primary-foreground",
+              buttonVariants({
+                size: "sm",
+                variant: "ghost",
+              })
+            )}
+          >
+            Add Driver
+          </Link>
+
+          <SearchBar to={`/drivers`} placeholder="Search a driver" />
+        </div>
       </div>
       <DataTable
         columns={columns}
         data={data}
         filter={"lastName"}
-        placeholder="Search a Last name"
+        searchBy={searchBy}
+        href={`/drivers/driver`}
       />
     </Container>
   );

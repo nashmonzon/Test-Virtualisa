@@ -18,7 +18,8 @@ const Navlinks = () => {
             prefetch
             className={cn(
               "capitalize",
-              pathanme?.includes(key) && "bg-[#ac5b96]",
+              "hover:text-primary-foreground",
+              pathanme?.includes(key) && "bg-[#ac5b96] text-primary-foreground",
               buttonVariants({
                 size: "sm",
                 variant: "ghost",

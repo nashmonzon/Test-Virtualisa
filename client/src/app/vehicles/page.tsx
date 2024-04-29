@@ -2,6 +2,9 @@ import Container from "@/components/ui/container";
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns, type Vehicles } from "./columns";
+import { PageProps } from "@/types/types";
+import { Button } from "@/components/ui/button";
+import SearchBar from "@/components/ui/search-bar";
 
 async function getData(): Promise<Vehicles[]> {
   return [
@@ -48,18 +51,23 @@ async function getData(): Promise<Vehicles[]> {
   ];
 }
 
-export default async function Vehicles() {
+export default async function Vehicles({ searchParams }: PageProps) {
   const data = await getData();
+  const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
   return (
     <Container>
-      <div className="mb-5 flex flex-col items-center justify-between gap-2 sm:flex-row mt-4">
-        <h2 className="page-title">Vehicles</h2>
+      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
+        <h2 className="page-title text-primary">VEHICLES</h2>
+        <div className="flex gap-4">
+          <Button>Add Vehicles</Button>
+          <SearchBar to={`/vehicles`} placeholder="Search a Plate" />
+        </div>
       </div>
       <DataTable
         columns={columns}
         data={data}
-        filter={"lastName"}
-        placeholder="Search a Last name"
+        filter={"domain"}
+        searchBy={searchBy}
       />
     </Container>
   );

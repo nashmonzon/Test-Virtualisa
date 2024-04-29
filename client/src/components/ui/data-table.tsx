@@ -19,21 +19,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
-import { Input } from "./input";
+import { useEffect, useState } from "react";
+
+import { LinkWrapper } from "../link-wrapper";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filter: string;
-  placeholder: string;
+  searchBy: string;
+  href?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filter,
-  placeholder,
+  searchBy,
+  href,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -51,22 +54,16 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log(data);
+  useEffect(() => {
+    if (searchBy) {
+      table.getColumn(filter)?.setFilterValue(searchBy);
+    } else {
+      table.resetColumnFilters();
+    }
+  }, [searchBy]);
 
   return (
     <>
-      <div className="flex flex-row items-center justify-end mb-3 ">
-        <Input
-          id="search-input"
-          className="w-[150px] sm:w-[300px] shadow-sm shadow-md "
-          type="text"
-          value={(table.getColumn(filter)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(filter)?.setFilterValue(event.target.value)
-          }
-          placeholder={placeholder}
-        />
-      </div>
       <div className="max-h-[calc(100vh-15rem)] overflow-y-scroll rounded-md border shadow-md ">
         <Table>
           <TableHeader>
@@ -88,21 +85,35 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
+            {table?.getRowModel().rows?.length ? (
+              table?.getRowModel().rows.map((row) => (
+                <LinkWrapper
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  legacyBehavior
+                  passHref
+                  href={
+                    href &&
+                    //@ts-expect-error
+                    `${href}/${row.original["id"]}${
+                      searchBy ? `?${searchBy}` : ""
+                    }`
+                  }
+                  className="cursor-pointer"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </LinkWrapper>
               ))
             ) : (
               <TableRow>

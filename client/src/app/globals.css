@@ -12,7 +12,7 @@
    }
 
    .page-title {
-     @apply mr-2 text-sm font-bold md:text-xl;
+     @apply mr-2 text-xl font-bold md:text-2xl;
    }
 
    .icon-btn {
@@ -114,7 +114,7 @@
    h4,
    h5,
    h6 {
-     @apply  font-bold;
+     @apply font-heading font-bold;
    }
 
    body {
