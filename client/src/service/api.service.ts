@@ -1,5 +1,6 @@
 import { GetDriver, GetDrivers } from "@/types/drivers";
 import { fetcher } from "./action.service";
+import { GetVehicles } from "@/types/vehicles";
 
 export const getDrivers = () => {
   return fetcher<GetDrivers>("/drivers", {
@@ -14,6 +15,19 @@ export const getDriver = (id: string) => {
 
 export const createDriver = (body: any) => {
   return fetcher<GetDriver>(`/drivers`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+export const getVehicles = () => {
+  return fetcher<GetVehicles>("/vehicles", {
+    next: { tags: ["vehicles", "drivers/add-driver"] },
+    cache: "no-store",
+  });
+};
+
+export const createVehicle = (body: any) => {
+  return fetcher<GetVehicles>(`/vehicles`, {
     method: "POST",
     body: JSON.stringify(body),
   });

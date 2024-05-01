@@ -14,3 +14,14 @@ export interface Vehicle {
   trips: Trip[];
   services: Service[];
 }
+
+export interface GetVehicles {
+  count: number;
+  vehicles: Vehicle[];
+  status: number;
+}
+
+export interface GetVehicle {
+  vehicle: Vehicle;
+  status: number;
+}
