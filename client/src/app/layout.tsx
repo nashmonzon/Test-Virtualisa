@@ -3,6 +3,7 @@ import { Raleway } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import NavBar from "@/components/nav-bar";
+import { Toaster } from "sonner";
 
 const raleway = Raleway({ style: ["italic", "normal"], subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         >
           <NavBar />
           {children}
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>

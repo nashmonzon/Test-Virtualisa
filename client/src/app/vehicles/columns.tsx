@@ -1,6 +1,10 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import SortBtn from "@/components/ui/button-sort";
+import { capitalize } from "@/lib/utils";
+import { VehicleStatus } from "@/types/enums";
+import { Vehicle } from "@/types/vehicles";
 import { ColumnDef } from "@tanstack/react-table";
 
 // This type is used to define the shape of our data.
@@ -14,7 +18,7 @@ export type Vehicles = {
   status: string;
 };
 
-export const columns: ColumnDef<Vehicles>[] = [
+export const columns: ColumnDef<Vehicle>[] = [
   {
     accessorKey: "domain",
     header: () => {
@@ -23,8 +27,8 @@ export const columns: ColumnDef<Vehicles>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
-
-      return <div className="p-4 font-medium">{value.domain}</div>;
+      const domain = value.domain.toUpperCase();
+      return <div className="p-4 font-medium">{domain}</div>;
     },
   },
   {
@@ -33,9 +37,10 @@ export const columns: ColumnDef<Vehicles>[] = [
       return <SortBtn label="Brand" column={column} />;
     },
     cell: ({ row }) => {
-      const value = row.original;
+      const value = row.original.brand;
+      const brand = capitalize(value);
 
-      return <div className="p-4 font-medium">{value.brand}</div>;
+      return <div className="p-4 font-medium">{brand}</div>;
     },
   },
 
@@ -45,9 +50,9 @@ export const columns: ColumnDef<Vehicles>[] = [
       return <SortBtn label="Model" column={column} />;
     },
     cell: ({ row }) => {
-      const value = row.original;
-
-      return <div className="p-4 font-medium">{value.model}</div>;
+      const value = row.original.model;
+      const model = capitalize(value);
+      return <div className="p-4 font-medium">{model}</div>;
     },
   },
   {
@@ -56,13 +61,9 @@ export const columns: ColumnDef<Vehicles>[] = [
       return <div className="px-4">Km</div>;
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("mileage"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      const value = row.original;
 
-      return <div className=" font-medium">{formatted}</div>;
+      return <div className=" font-medium">{value.mileage} Km</div>;
     },
   },
   {
@@ -73,18 +74,16 @@ export const columns: ColumnDef<Vehicles>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.status}</div>;
-    },
-  },
-  {
-    accessorKey: "caca",
-    header: () => {
-      return <div className="px-4">Status</div>;
-    },
-    cell: ({ row }) => {
-      const value = row.original;
-
-      return <div className="p-4 font-medium">{value.status}</div>;
+      return (
+        <Badge
+          variant={`${
+            value.status === VehicleStatus.IN_REPAIR ? "destructive" : "success"
+          }`}
+          className="font-medium"
+        >
+          {value.status}
+        </Badge>
+      );
     },
   },
 ];

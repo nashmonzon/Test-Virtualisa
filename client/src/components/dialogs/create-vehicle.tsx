@@ -22,6 +22,10 @@ import {
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import { type Vehicles } from "@/app/vehicles/columns";
+import { redirects, revalidateTags } from "@/service/action.service";
+import { createVehicle } from "@/service/api.service";
+import { fireSuccessToast } from "@/lib/utils";
+import { toast } from "sonner";
 
 function CreateVehicle() {
   const form = useForm<Vehicles>({});
@@ -34,7 +38,25 @@ function CreateVehicle() {
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Vehicles> = async (data) => {
-    console.log(data);
+    if (!data) return;
+
+    try {
+      const requestBody = {
+        domain: data.domain,
+        brand: data.brand,
+        model: data.model,
+      };
+      const res = await createVehicle(requestBody);
+
+      if (!res.success) {
+        return;
+      }
+      fireSuccessToast("Vehicle was added!");
+      revalidateTags("vehicles");
+      redirects("/vehicles");
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <Form {...form}>
@@ -68,6 +90,16 @@ function CreateVehicle() {
         })}
 
         <div className="mt-6 flex justify-between">
+          <button
+            onClick={() =>
+              toast.success("This is a sonner toast", {
+                className: "bg-success text-white",
+              })
+            }
+          >
+            Render my toast
+          </button>
+
           <Button
             size={"sm"}
             onClick={() => router.back()}

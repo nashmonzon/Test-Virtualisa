@@ -7,6 +7,8 @@ import { buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getVehicles } from "@/service/api.service";
+import { Vehicle } from "@/types/vehicles";
 
 async function getData(): Promise<Vehicles[]> {
   return [
@@ -54,7 +56,13 @@ async function getData(): Promise<Vehicles[]> {
 }
 
 export default async function Vehicles({ searchParams }: PageProps) {
-  const data = await getData();
+  const res = await getVehicles();
+
+  let data: Vehicle[] = [];
+  if (res.success) {
+    data = res.data.vehicles;
+  }
+
   const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
   return (
     <Container>
