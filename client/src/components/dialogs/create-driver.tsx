@@ -11,7 +11,6 @@ import { DialogHeader } from "../ui/dialog";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Input as InputType, INPUTS_TYPES } from "@/types/inputsTypes";
 
-import { Drivers } from "@/app/drivers/columns";
 import {
   Form,
   FormControl,
@@ -22,9 +21,12 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import { Driver } from "@/types/drivers";
+import { redirects, revalidateTags } from "@/service/action.service";
+import { createDriver } from "@/service/api.service";
 
 function CreateDriver() {
-  const form = useForm<Drivers>({});
+  const form = useForm<Driver>({});
   const {
     handleSubmit,
     formState: { isDirty },
@@ -33,14 +35,34 @@ function CreateDriver() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<Drivers> = async (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Driver> = async (data) => {
+    if (!data) return;
+
+    try {
+      const requestBody = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        dni: data.dni,
+        licenseType: data.licenseType,
+        licenseExpiry: new Date(data.licenseExpiry).toISOString(),
+      };
+      const res = await createDriver(requestBody);
+
+      if (!res.success) {
+        return;
+      }
+      revalidateTags("drivers");
+      redirects("/drivers");
+    } catch (error) {
+      console.error(error);
+    }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Add driver</DialogTitle>
+          <DialogTitle className="text-primary">Add driver</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
         {DRIVER_REGISTER.map(({ name, label, props }) => {
@@ -89,7 +111,7 @@ function CreateDriver() {
   );
 }
 
-export const DRIVER_REGISTER: InputType<keyof Drivers>[] = [
+export const DRIVER_REGISTER: InputType<keyof Driver>[] = [
   {
     label: "First name",
     name: "firstName",

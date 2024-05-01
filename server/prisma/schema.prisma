@@ -34,6 +34,7 @@ model Driver {
   dni           String          @unique
   licenseType   LicenseType
   licenseExpiry DateTime
+  kilometers    Int             @default(0)
   vehicles      DriverVehicle[]
   trips         Trip[]
 

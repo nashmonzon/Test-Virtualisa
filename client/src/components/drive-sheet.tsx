@@ -14,9 +14,12 @@ import { Form } from "./ui/form";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "./ui/separator";
-import { type Drivers } from "@/app/drivers/columns";
+import { Driver } from "@/types/drivers";
 
-function DriverSheet({ details }: { details: Drivers }) {
+function DriverSheet({ details }: { details?: Driver }) {
+  if (!details) {
+    return null;
+  }
   const router = useRouter();
   const params = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -46,7 +49,7 @@ function DriverSheet({ details }: { details: Drivers }) {
             <SheetDescription>
               See details for
               <span className="font-bold">
-                {` ${details.firstName} ${details.lastName}`}
+                {` ${details?.firstName} ${details?.lastName}`}
               </span>
             </SheetDescription>
           </SheetHeader>
@@ -111,7 +114,7 @@ enum DRIVER {
   firstName = "First Name",
   lastName = "Last Name",
   dni = "DNI",
-  distance = "Distance",
+  kilomiters = "Distance",
   licenseType = "License Type",
   licenseExpiry = "License Expiry",
   status = "Status",

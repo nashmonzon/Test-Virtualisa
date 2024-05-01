@@ -1,41 +1,36 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import SortBtn from "@/components/ui/button-sort";
+import { capitalize } from "@/lib/utils";
+import { Driver } from "@/types/drivers";
 import { ColumnDef } from "@tanstack/react-table";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Drivers = {
-  id: string;
-  firstName: String;
-  lastName: String;
-  dni: String;
-  distance: number;
-  licenseType: string;
-  licenseExpiry: string;
+export interface ExtendedDriver extends Driver {
   status: string;
-};
-
-export enum LicenseType {
-  PERSONAL,
-  PROFESSIONAL,
 }
-export enum Status {
-  aprove,
-  notApruve,
+enum LicenseType {
+  PERSONAL = "PERSONAL",
+  PROFESSIONAL = "PROFESSIONAL",
 }
 
-export const columns: ColumnDef<Drivers>[] = [
+enum Status {
+  PROHIBITED = "Prohibited",
+  ALLOWED = "Allowed",
+}
+
+export const columns: ColumnDef<ExtendedDriver>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
-      return <SortBtn label="firstName" column={column} />;
+      return <SortBtn label="First Name" column={column} />;
     },
 
     cell: ({ row }) => {
       const value = row.original;
+      const firstName = capitalize(value.firstName);
 
-      return <div className="p-4 font-medium">{value.firstName}</div>;
+      return <div className="p-4 font-medium">{firstName}</div>;
     },
   },
 
@@ -46,8 +41,8 @@ export const columns: ColumnDef<Drivers>[] = [
     },
     cell: ({ row }) => {
       const value = row.original;
-
-      return <div className="p-4 font-medium">{value.lastName}</div>;
+      const lastName = capitalize(value.lastName);
+      return <div className="p-4 font-medium">{lastName}</div>;
     },
   },
   {
@@ -62,18 +57,14 @@ export const columns: ColumnDef<Drivers>[] = [
     },
   },
   {
-    accessorKey: "distance",
+    accessorKey: "kilomiters",
     header: () => {
-      return <div className="px-4">Dni</div>;
+      return <div className="px-4">Total Km</div>;
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("distance"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      const value = row.original;
 
-      return <div className=" font-medium">{formatted}</div>;
+      return <div className=" font-medium">{value.kilomiters ?? 0} KM</div>;
     },
   },
   {
@@ -104,10 +95,47 @@ export const columns: ColumnDef<Drivers>[] = [
     header: () => {
       return <div className="px-4">Status</div>;
     },
-    cell: ({ row }) => {
-      const value = row.original;
+    cell: (row) => {
+      const value = row.row.original;
 
-      return <div className="p-4 font-medium">{value.status}</div>;
+      const status = getLicenseStatus(value.licenseExpiry, value.licenseType);
+
+      return (
+        <Badge
+          variant={`${
+            status === Status.PROHIBITED ? "destructive" : "success"
+          }`}
+          className="font-medium"
+        >
+          {status}
+        </Badge>
+      );
     },
   },
 ];
+
+function getLicenseStatus(
+  licenseExpiry: string,
+  licenseType: LicenseType
+): string {
+  const currentDate = new Date();
+  const licenseExpiryDate = new Date(licenseExpiry);
+  const differenceInYears =
+    currentDate.getFullYear() - licenseExpiryDate.getFullYear();
+
+  let status = "";
+  if (licenseType === LicenseType.PERSONAL) {
+    if (differenceInYears > 1) {
+      status = Status.PROHIBITED;
+    } else {
+      status = Status.ALLOWED;
+    }
+  } else if (licenseType === LicenseType.PROFESSIONAL) {
+    if (differenceInYears > 5) {
+      status = Status.PROHIBITED;
+    } else {
+      status = Status.ALLOWED;
+    }
+  }
+  return status;
+}

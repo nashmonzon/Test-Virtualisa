@@ -6,11 +6,10 @@ const vehiclesRoutes = require("./routes/vehicles.routes");
 const driverVehicleRoutes = require("./routes/driverVehicle.routes");
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
-
-app.use(express.json());
-app.use(cors());
 
 app.use("/drivers", driversRoutes);
 app.use("/vehicles", vehiclesRoutes);
