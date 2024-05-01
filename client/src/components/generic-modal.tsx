@@ -30,7 +30,9 @@ function GenericModal(props: CreateDialogProps) {
     <Modal
       onOpenChange={onOpenChange}
       defaultOpen
-      className={cn("mt-10 max-h-screen overflow-y-scroll ")}
+      className={cn(
+        "mt-10 max-h-screen overflow-y-scroll shadow-md shadow-muted"
+      )}
     >
       <DialogContent {...props} />
     </Modal>

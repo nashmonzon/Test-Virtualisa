@@ -1,5 +1,4 @@
-import { Driver } from "@prisma/client";
-import { PrismaClientValidationError } from "@prisma/client/runtime/library";
+import { Driver, Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 
 const { PrismaClient } = require("@prisma/client");
@@ -22,12 +21,16 @@ exports.createDriver = async (
         licenseType,
       },
     });
-    res.status(200).json(driver);
+    const response = {
+      driver: driver,
+      status: 200,
+    };
+    res.status(201).json(response);
   } catch (error) {
-    if (error instanceof PrismaClientValidationError) {
-      res.status(400).json({ error: error.message });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") res.status(400).send("Driver already exists");
     } else {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: `${error}` });
     }
   }
 };
@@ -38,9 +41,15 @@ exports.getDrivers = async (
 ) => {
   try {
     const drivers = await prisma.driver.findMany();
-    res.status(200).json(drivers);
+    const response = {
+      count: drivers.length,
+      drivers: drivers,
+      status: 200,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-    if (error instanceof PrismaClientValidationError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
       res.status(500).json({ error: "Internal Server Error" });
@@ -53,7 +62,7 @@ exports.getDriver = async (
   res: Response
 ) => {
   const { id } = req.params;
-  console.log(typeof id);
+
   try {
     const driver = await prisma.driver.findUnique({
       where: { id: Number(id) },
@@ -61,10 +70,14 @@ exports.getDriver = async (
         vehicles: true,
       },
     });
+    const response = {
+      driver: driver,
+      status: 200,
+    };
 
-    res.status(200).json(driver);
+    res.status(200).json(response);
   } catch (error) {
-    if (error instanceof PrismaClientValidationError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
       res.status(500).json({ error: "Internal Server Error" });
@@ -80,7 +93,7 @@ exports.deleteAllDriver = async (
     const drivers = await prisma.driver.deleteMany();
     res.status(200).json(drivers);
   } catch (error) {
-    if (error instanceof PrismaClientValidationError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
       res.status(500).json({ error: "Internal Server Error" });

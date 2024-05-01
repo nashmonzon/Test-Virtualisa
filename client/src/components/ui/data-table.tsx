@@ -64,9 +64,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="max-h-[calc(100vh-15rem)] overflow-y-scroll rounded-md border shadow-md ">
+      <div className="max-h-[calc(100vh-15rem)] overflow-y-scroll rounded-md border shadow-md  shadow-muted">
         <Table>
-          <TableHeader>
+          <TableHeader className="shadow-md bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -98,11 +98,11 @@ export function DataTable<TData, TValue>({
                       searchBy ? `?${searchBy}` : ""
                     }`
                   }
-                  className="cursor-pointer"
                 >
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className={`${href && "cursor-pointer"}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

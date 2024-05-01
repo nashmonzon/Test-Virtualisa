@@ -1,12 +1,14 @@
 import Container from "@/components/ui/container";
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
-import { columns, type Drivers } from "./columns";
+import { columns } from "./columns";
 import { Button, buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
 import { PageProps } from "@/types/types";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getDrivers } from "@/service/api.service";
+import { type Driver } from "@/types/drivers";
 export enum LicenseType {
   PERSONAL,
   PROFESSIONAL,
@@ -16,65 +18,14 @@ export enum Status {
   notApruve,
 }
 
-export async function getData(): Promise<Drivers[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      id: "1",
-      firstName: "John",
-      lastName: "Doe",
-      dni: "123456789",
-      distance: 1000,
-      licenseType: "PERSONAL",
-      licenseExpiry: "2025-12-31",
-      status: "aprove",
-    },
-    {
-      id: "2",
-      firstName: "Alice",
-      lastName: "Smith",
-      dni: "987654321",
-      distance: 1500,
-      licenseType: "PROFESSIONAL",
-      licenseExpiry: "2024-10-15",
-      status: "notApruve",
-    },
-    {
-      id: "3",
-      firstName: "Bob",
-      lastName: "Johnson",
-      dni: "456789123",
-      distance: 2000,
-      licenseType: "PERSONAL",
-      licenseExpiry: "2023-08-20",
-      status: "aprove",
-    },
-    {
-      id: "4",
-      firstName: "Emily",
-      lastName: "Brown",
-      dni: "321654987",
-      distance: 1800,
-      licenseType: "PROFESSIONAL",
-      licenseExpiry: "2026-05-05",
-      status: "notApruve",
-    },
-    {
-      id: "5",
-      firstName: "Michael",
-      lastName: "Davis",
-      dni: "654321987",
-      distance: 2200,
-      licenseType: "PERSONAL",
-      licenseExpiry: "2023-11-30",
-      status: "aprove",
-    },
-  ];
-}
-
 export default async function Drivers({ searchParams }: PageProps) {
-  const data = await getData();
-  const id = searchParams?.id ? String(searchParams.id) : "";
+  const res = await getDrivers();
+
+  let data: Driver[] = [];
+  if (res.success) {
+    data = res.data.drivers;
+  }
+
   const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
 
   return (
@@ -101,6 +52,7 @@ export default async function Drivers({ searchParams }: PageProps) {
         </div>
       </div>
       <DataTable
+        //@ts-expect-error
         columns={columns}
         data={data}
         filter={"lastName"}

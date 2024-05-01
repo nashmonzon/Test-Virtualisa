@@ -1,6 +1,6 @@
 import DriverSheet from "@/components/drive-sheet";
+import { getDriver } from "@/service/api.service";
 
-import { getData } from "../../page";
 interface DriverDetailsProps {
   params: {
     id: string;
@@ -9,10 +9,11 @@ interface DriverDetailsProps {
 export default async function DriverDetails({
   params: { id },
 }: DriverDetailsProps) {
-  const data = await getData();
-  const driver = data.find((driver) => driver.id === id);
-  if (!driver) {
-    return <p>No driver found with the provided ID</p>;
+  const res = await getDriver(id);
+
+  if (!res.success) {
+    return null;
   }
-  return <DriverSheet details={driver} />;
+
+  return <DriverSheet details={res.data.driver} />;
 }
