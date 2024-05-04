@@ -14,13 +14,13 @@ datasource db {
 }
 
 model Vehicle {
-  id      Int             @id @default(autoincrement())
-  domain  String          @unique
+  id      Int           @id @default(autoincrement())
+  domain  String        @unique
   brand   String
   model   String
   mileage Int
   status  VehicleStatus
-  drivers DriverVehicle[]
+  drivers Driver[]
   trips   Trip[]
   Service Service[]
 
@@ -28,27 +28,17 @@ model Vehicle {
 }
 
 model Driver {
-  id            Int             @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   firstName     String
   lastName      String
-  dni           String          @unique
+  dni           String      @unique
   licenseType   LicenseType
   licenseExpiry DateTime
-  kilometers    Int             @default(0)
-  vehicles      DriverVehicle[]
+  kilometers    Int         @default(0)
+  vehicles      Vehicle[]
   trips         Trip[]
 
   @@map("driver")
-}
-
-model DriverVehicle {
-  id        Int     @id @default(autoincrement())
-  driverId  Int
-  vehicleId Int
-  driver    Driver  @relation(fields: [driverId], references: [id])
-  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
-
-  @@map("driver_vehicle")
 }
 
 model Price {

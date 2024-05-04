@@ -10,9 +10,10 @@ export enum INPUTS_TYPES {
 export interface Input<T = string> {
   name: T;
   label: string;
+  type: string;
   props?: {
-    type: string;
     data?: Array<string>;
+    options?: Array<{ label: string; value: string; name?: string }>;
     required?: boolean;
     helperText?: string;
   };

@@ -19,13 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
+import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
 import { type Vehicles } from "@/app/vehicles/columns";
 import { redirects, revalidateTags } from "@/service/action.service";
 import { createVehicle } from "@/service/api.service";
 import { fireSuccessToast } from "@/lib/utils";
 import { toast } from "sonner";
+import InputWrapper from "../inputs-wrapper";
 
 function CreateVehicle() {
   const form = useForm<Vehicles>({});
@@ -62,12 +63,10 @@ function CreateVehicle() {
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>Add Vehicle</DialogTitle>
+          <DialogTitle className="text-primary">Add Vehicle</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
-        {VEHICLE_REGISTER.map(({ name, label, props }) => {
-          const { type, data, required } = props || {};
-
+        {VEHICLE_REGISTER.map(({ name, label, type, props }) => {
           return (
             <FormField
               key={name}
@@ -78,8 +77,7 @@ function CreateVehicle() {
                   <FormLabel className={"font-bold"}>{label}</FormLabel>
 
                   <FormControl>
-                    {/* @ts-expect-error too many props */}
-                    <Input {...field} />
+                    <InputWrapper type={type} props={props} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -125,17 +123,20 @@ export const VEHICLE_REGISTER: InputType<keyof Vehicles>[] = [
   {
     label: "Plate",
     name: "domain",
-    props: { type: INPUTS_TYPES.Text, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
   {
     label: "Brand",
     name: "brand",
-    props: { type: INPUTS_TYPES.Text, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
   {
     label: "Model",
     name: "model",
-    props: { type: INPUTS_TYPES.Phone, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
 ];
 

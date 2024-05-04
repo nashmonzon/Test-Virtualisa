@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
+import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
 import { Trips } from "@/app/trips/columns";
 

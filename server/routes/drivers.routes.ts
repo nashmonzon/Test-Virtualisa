@@ -8,5 +8,6 @@ router.get("/", driversController.getDrivers);
 router.get("/:id", driversController.getDriver);
 router.post("/", driversController.createDriver);
 router.delete("/", driversController.deleteAllDriver);
+router.post("/assign", driversController.assignVehicleToDriver);
 
 module.exports = router;

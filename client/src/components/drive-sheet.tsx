@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "./ui/separator";
 import { Driver } from "@/types/drivers";
+import { formatDate } from "@/lib/dates";
 
 function DriverSheet({ details }: { details?: Driver }) {
   if (!details) {
@@ -59,12 +60,19 @@ function DriverSheet({ details }: { details?: Driver }) {
             <Separator className="my-2" />
             <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
               {Object.entries(details).map(([key, value]) => {
-                if (key === "id") return null;
+                if (key === "id" || !DRIVER[key as keyof typeof DRIVER])
+                  return null;
+
                 return (
                   <div key={key} className="flex flex-col">
                     <span className="font-bold">
                       {array(key as keyof typeof DRIVER)}:{" "}
-                      <span className="font-normal">{value}</span>
+                      <span className="font-normal">
+                        {DRIVER[key as keyof typeof DRIVER] ===
+                        DRIVER.licenseExpiry
+                          ? formatDate(value)
+                          : value}
+                      </span>
                     </span>
                   </div>
                 );
@@ -114,10 +122,9 @@ enum DRIVER {
   firstName = "First Name",
   lastName = "Last Name",
   dni = "DNI",
-  kilomiters = "Distance",
+  kilometers = "Distance",
   licenseType = "License Type",
   licenseExpiry = "License Expiry",
-  status = "Status",
 }
 
 const array = (key: keyof typeof DRIVER) => {

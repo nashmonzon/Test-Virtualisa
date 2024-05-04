@@ -5,6 +5,10 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 type DriverRequestBody = Omit<Driver, "id">;
+type AssignVehicleRequestBody = {
+  driverId: number;
+  vehicleId: number;
+};
 exports.createDriver = async (
   req: Request<any, any, DriverRequestBody>,
   res: Response
@@ -93,6 +97,42 @@ exports.deleteAllDriver = async (
     const drivers = await prisma.driver.deleteMany();
     res.status(200).json(drivers);
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+};
+
+exports.assignVehicleToDriver = async (
+  req: Request<any, any, AssignVehicleRequestBody>,
+  res: Response
+) => {
+  const { driverId, vehicleId } = req.body;
+
+  try {
+    const existingAssignment = await prisma.driver.findFirst({
+      where: {
+        id: driverId,
+        vehicles: { some: { id: vehicleId } },
+      },
+    });
+
+    if (existingAssignment) {
+      res.status(409).send("Driver already has this vehicle assigned");
+      return;
+    }
+
+    await prisma.driver.update({
+      where: { id: driverId },
+      data: {
+        vehicles: { connect: { id: vehicleId } },
+      },
+    });
+    res.status(200).send("Vehicle assigned to driver successfully");
+  } catch (error) {
+    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {

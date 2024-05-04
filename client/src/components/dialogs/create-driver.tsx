@@ -19,11 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
+import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
 import { Driver } from "@/types/drivers";
 import { redirects, revalidateTags } from "@/service/action.service";
 import { createDriver } from "@/service/api.service";
+import InputWrapper from "../inputs-wrapper";
+import { LicenseType } from "@/types/enums";
+import { fireSuccessToast } from "@/lib/utils";
 
 function CreateDriver() {
   const form = useForm<Driver>({});
@@ -37,20 +40,22 @@ function CreateDriver() {
 
   const onSubmit: SubmitHandler<Driver> = async (data) => {
     if (!data) return;
+    console.log(data);
 
     try {
-      const requestBody = {
+      const requestBody: Partial<Driver> = {
         firstName: data.firstName,
         lastName: data.lastName,
         dni: data.dni,
         licenseType: data.licenseType,
-        licenseExpiry: new Date(data.licenseExpiry).toISOString(),
+        licenseExpiry: data.licenseExpiry,
       };
       const res = await createDriver(requestBody);
 
       if (!res.success) {
         return;
       }
+      fireSuccessToast("Driver was added!");
       revalidateTags("drivers");
       redirects("/drivers");
     } catch (error) {
@@ -65,9 +70,7 @@ function CreateDriver() {
           <DialogTitle className="text-primary">Add driver</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
-        {DRIVER_REGISTER.map(({ name, label, props }) => {
-          const { type, data, required } = props || {};
-
+        {DRIVER_REGISTER.map(({ name, label, type, props }) => {
           return (
             <FormField
               key={name}
@@ -78,8 +81,7 @@ function CreateDriver() {
                   <FormLabel className={"font-bold"}>{label}</FormLabel>
 
                   <FormControl>
-                    {/* @ts-expect-error too many props */}
-                    <Input {...field} />
+                    <InputWrapper type={type} props={props} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -111,36 +113,51 @@ function CreateDriver() {
   );
 }
 
+export const LICENCE_TYPE = [
+  {
+    label: "Personal",
+    value: LicenseType.PERSONAL,
+  },
+  {
+    label: "Professional",
+    value: LicenseType.PROFESSIONAL,
+  },
+];
+
 export const DRIVER_REGISTER: InputType<keyof Driver>[] = [
   {
     label: "First name",
     name: "firstName",
-    props: { type: INPUTS_TYPES.Text, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
   {
     label: "Last name",
     name: "lastName",
-    props: { type: INPUTS_TYPES.Text, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
   {
     label: "Dni",
     name: "dni",
-    props: { type: INPUTS_TYPES.Phone, required: true },
+    type: INPUTS_TYPES.Text,
+    props: { required: true },
   },
 
   {
     label: "License Type",
     name: "licenseType",
+    type: INPUTS_TYPES.Select,
     props: {
-      type: INPUTS_TYPES.Text,
+      options: LICENCE_TYPE,
       required: true,
     },
   },
   {
     label: "License Expiry",
     name: "licenseExpiry",
+    type: INPUTS_TYPES.Date,
     props: {
-      type: INPUTS_TYPES.Text,
       required: true,
     },
   },

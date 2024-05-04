@@ -31,3 +31,13 @@ export interface DriverVehicle {
   driver: Driver;
   vehicle: Vehicle;
 }
+
+export type AssignVehicleRequestBody = {
+  driverId: number;
+  vehicleId: number;
+};
+
+export interface GetAssignVehicle {
+  status: number;
+  message: string;
+}

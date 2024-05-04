@@ -9,10 +9,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getDrivers } from "@/service/api.service";
 import { type Driver } from "@/types/drivers";
-export enum LicenseType {
-  PERSONAL,
-  PROFESSIONAL,
-}
+
 export enum Status {
   aprove,
   notApruve,
@@ -46,6 +43,20 @@ export default async function Drivers({ searchParams }: PageProps) {
             )}
           >
             Add Driver
+          </Link>
+          <Link
+            href={`/drivers/add-assignment`}
+            className={cn(
+              "capitalize",
+              "hover:text-primary-foreground",
+              "bg-[#ac5b96] text-primary-foreground",
+              buttonVariants({
+                size: "sm",
+                variant: "ghost",
+              })
+            )}
+          >
+            Assign Vehicle
           </Link>
 
           <SearchBar to={`/drivers`} placeholder="Search a driver" />
