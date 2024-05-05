@@ -9,11 +9,15 @@ import CreateDriver from "./dialogs/create-driver";
 import Modal from "./modal";
 import { CreateType } from "@/types/enums";
 import CreateVehicle from "./dialogs/create-vehicle";
+import { Driver } from "@/types/drivers";
+import { Vehicle } from "@/types/vehicles";
+import CreateAssignment from "./dialogs/create-assignment";
 
 interface CreateDialogProps {
   id?: string;
   type: CreateType;
   to: string;
+  drivers?: Driver[];
 }
 
 function GenericModal(props: CreateDialogProps) {
@@ -39,7 +43,17 @@ function GenericModal(props: CreateDialogProps) {
   );
 }
 
-const DialogContent = ({ type, id }: { type: CreateType; id?: string }) => {
+const DialogContent = ({
+  type,
+  id,
+  drivers,
+  vehicles,
+}: {
+  type: CreateType;
+  id?: string;
+  drivers?: Driver[];
+  vehicles?: Vehicle[];
+}) => {
   if (type === CreateType.CreateDriver) {
     return <CreateDriver />;
   }
@@ -48,6 +62,9 @@ const DialogContent = ({ type, id }: { type: CreateType; id?: string }) => {
   }
   if (type === CreateType.CreateTrip) {
     return <CreateVehicle />;
+  }
+  if (type === CreateType.CreateAssignment) {
+    return <CreateAssignment drivers={drivers} />;
   }
 
   return <div>DEFAULT CASE</div>;

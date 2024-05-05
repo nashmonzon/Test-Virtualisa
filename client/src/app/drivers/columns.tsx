@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import SortBtn from "@/components/ui/button-sort";
+import { formatDate } from "@/lib/dates";
 import { capitalize } from "@/lib/utils";
 import { Driver } from "@/types/drivers";
 import { ColumnDef } from "@tanstack/react-table";
@@ -87,7 +88,9 @@ export const columns: ColumnDef<ExtendedDriver>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.licenseExpiry}</div>;
+      return (
+        <div className="p-4 font-medium">{formatDate(value.licenseExpiry)}</div>
+      );
     },
   },
   {
@@ -120,8 +123,14 @@ function getLicenseStatus(
 ): string {
   const currentDate = new Date();
   const licenseExpiryDate = new Date(licenseExpiry);
+
+  // Calculamos la diferencia en milisegundos
+  const differenceInMilliseconds =
+    currentDate.getTime() - licenseExpiryDate.getTime();
+
+  // Convertimos la diferencia de milisegundos a años
   const differenceInYears =
-    currentDate.getFullYear() - licenseExpiryDate.getFullYear();
+    differenceInMilliseconds / (1000 * 60 * 60 * 24 * 365);
 
   let status = "";
   if (licenseType === LicenseType.PERSONAL) {

@@ -3,7 +3,6 @@ import cors from "cors";
 
 const driversRoutes = require("./routes/drivers.routes");
 const vehiclesRoutes = require("./routes/vehicles.routes");
-const driverVehicleRoutes = require("./routes/driverVehicle.routes");
 
 const app = express();
 app.use(cors());
@@ -13,7 +12,6 @@ app.set("views", __dirname + "/views");
 
 app.use("/drivers", driversRoutes);
 app.use("/vehicles", vehiclesRoutes);
-app.use("/driver/:driverId/vehicle/:vehicleId", driverVehicleRoutes);
 
 const PORT = process.env.PORT || 4000;
 

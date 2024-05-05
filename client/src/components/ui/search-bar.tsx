@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, X } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/inputs/input";
 
 const SearchBar = ({
   to,

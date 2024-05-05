@@ -7,13 +7,11 @@ import { VehicleStatus } from "@/types/enums";
 import { Vehicle } from "@/types/vehicles";
 import { ColumnDef } from "@tanstack/react-table";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Vehicles = {
   id: string;
-  domain: String;
-  brand: String;
-  model: String;
+  domain: string;
+  brand: string;
+  model: string;
   mileage: number;
   status: string;
 };

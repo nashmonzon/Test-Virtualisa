@@ -1,31 +1,26 @@
 import React from "react";
-import {
-  Control,
-  Controller,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 
-interface InputsWrapper {
-  nextStep?: () => void;
-  name: string;
-  label?: string;
-  type?: string;
-  data?: string[];
-  control?: Control<any>;
-  errors?: string | any; // TODO!: FIX!
-  editable?: boolean;
-  getValues?: () => void;
-  setValue?: UseFormSetValue<any>;
-  watch?: UseFormWatch<any>;
-  required?: boolean;
-  helperText?: string;
+import { Input } from "./ui/inputs/input";
+
+import { INPUTS_TYPES } from "@/types/inputsTypes";
+import DateInput from "./ui/inputs/date-input";
+import SelectInput from "./ui/inputs/select-input";
+
+//@ts-expect-error
+export default function InputWrapper({ type, props, ...field }) {
+  if (!type) return null;
+
+  if (type === INPUTS_TYPES.Date) {
+    return <DateInput {...field} />;
+  }
+  if (type === INPUTS_TYPES.Select) {
+    let { options } = props;
+
+    if (!options || !options.length) {
+      options = [{ label: "No options", value: "no-options" }];
+    }
+
+    return <SelectInput options={options} {...field} />;
+  }
+  return <Input {...field} />;
 }
-
-const InputsWrapper = ({ ...props }: InputsWrapper) => {
-  return <Input {...props} />;
-};
-
-export default InputsWrapper;
