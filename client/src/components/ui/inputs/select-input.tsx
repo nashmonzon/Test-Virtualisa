@@ -14,11 +14,11 @@ import {
 
 //@ts-expect-error
 function SelectInput({ options, ...field }) {
-  const { onChange, value, placeholder } = field;
-  console.log(options);
+  const { onChange, value, placeholder, name } = field;
 
   return (
     <Select
+      key={name}
       onValueChange={(v) => onChange?.(v)}
       defaultValue={value}
       {...field}

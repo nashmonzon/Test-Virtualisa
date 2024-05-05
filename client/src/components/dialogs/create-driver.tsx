@@ -40,7 +40,6 @@ function CreateDriver() {
 
   const onSubmit: SubmitHandler<Driver> = async (data) => {
     if (!data) return;
-    console.log(data);
 
     try {
       const requestBody: Partial<Driver> = {

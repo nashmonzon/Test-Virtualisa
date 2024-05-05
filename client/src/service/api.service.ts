@@ -44,3 +44,9 @@ export const createAssignment = (body: AssignVehicleRequestBody) => {
     body: JSON.stringify(body),
   });
 };
+
+export const getVehiclesWithoutDriver = (id: string) => {
+  return fetcher<GetVehicles>(`/vehicles/without-driver/${id}`, {
+    cache: "force-cache",
+  });
+};

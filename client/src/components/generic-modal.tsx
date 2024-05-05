@@ -18,7 +18,6 @@ interface CreateDialogProps {
   type: CreateType;
   to: string;
   drivers?: Driver[];
-  vehicles?: Vehicle[];
 }
 
 function GenericModal(props: CreateDialogProps) {
@@ -65,7 +64,7 @@ const DialogContent = ({
     return <CreateVehicle />;
   }
   if (type === CreateType.CreateAssignment) {
-    return <CreateAssignment drivers={drivers} vehicles={vehicles} />;
+    return <CreateAssignment drivers={drivers} />;
   }
 
   return <div>DEFAULT CASE</div>;

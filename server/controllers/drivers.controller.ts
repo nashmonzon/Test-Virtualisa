@@ -130,7 +130,19 @@ exports.assignVehicleToDriver = async (
         vehicles: { connect: { id: vehicleId } },
       },
     });
-    res.status(200).send("Vehicle assigned to driver successfully");
+
+    await prisma.vehicle.update({
+      where: { id: vehicleId },
+      data: {
+        drivers: { connect: { id: driverId } },
+      },
+    });
+
+    const response = {
+      message: "Vehicle assigned to driver successfully",
+      status: 200,
+    };
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
