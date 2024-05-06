@@ -152,3 +152,35 @@ exports.assignVehicleToDriver = async (
     }
   }
 };
+
+exports.getDriversWithVehicles = async (
+  _req: Request<any, any, DriverRequestBody>,
+  res: Response
+) => {
+  try {
+    const driversWithVehicles = await prisma.driver.findMany({
+      where: {
+        vehicles: {
+          some: {},
+        },
+      },
+      include: {
+        vehicles: true,
+      },
+    });
+
+    const response = {
+      count: driversWithVehicles.length,
+      drivers: driversWithVehicles,
+      status: 200,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+};

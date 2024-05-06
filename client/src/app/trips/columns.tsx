@@ -1,6 +1,9 @@
 "use client";
 
 import SortBtn from "@/components/ui/button-sort";
+import { formatDate } from "@/lib/dates";
+import { capitalize } from "@/lib/utils";
+import { Trip } from "@/types/trips";
 import { ColumnDef } from "@tanstack/react-table";
 
 // This type is used to define the shape of our data.
@@ -16,7 +19,7 @@ export type Trips = {
   domain: string;
 };
 
-export const columns: ColumnDef<Trips>[] = [
+export const columns: ColumnDef<Trip>[] = [
   {
     accessorKey: "startDate",
     header: ({ column }) => {
@@ -26,20 +29,17 @@ export const columns: ColumnDef<Trips>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.startDate}</div>;
+      return (
+        <div className="p-4 font-medium">{formatDate(value.startDate)}</div>
+      );
     },
   },
   {
     accessorKey: "distance",
     header: () => <div className="">KM</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("distance"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className=" font-medium">{formatted}</div>;
+      const value = row.original;
+      return <div className=" font-medium">{value.distance} Km</div>;
     },
   },
   {
@@ -50,8 +50,9 @@ export const columns: ColumnDef<Trips>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
+      const firstName = capitalize(value.driver.firstName);
 
-      return <div className="p-4 font-medium">{value.firstName}</div>;
+      return <div className="p-4 font-medium">{firstName}</div>;
     },
   },
   {
@@ -62,8 +63,9 @@ export const columns: ColumnDef<Trips>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
+      const lastName = capitalize(value.driver.lastName);
 
-      return <div className="p-4 font-medium">{value.lastName}</div>;
+      return <div className="p-4 font-medium">{lastName}</div>;
     },
   },
   {
@@ -75,7 +77,7 @@ export const columns: ColumnDef<Trips>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.brand}</div>;
+      return <div className="p-4 font-medium">{value.vehicle.brand}</div>;
     },
   },
   {
@@ -87,7 +89,7 @@ export const columns: ColumnDef<Trips>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.model}</div>;
+      return <div className="p-4 font-medium">{value.vehicle.model}</div>;
     },
   },
   {
@@ -99,7 +101,7 @@ export const columns: ColumnDef<Trips>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.domain}</div>;
+      return <div className="p-4 font-medium">{value.vehicle.domain}</div>;
     },
   },
 ];

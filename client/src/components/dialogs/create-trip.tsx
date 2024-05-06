@@ -1,9 +1,14 @@
 "use client";
-import { useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Loader2 } from "lucide-react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  SubmitHandler,
+  useForm,
+  UseFormReturn,
+  UseFormSetValue,
+} from "react-hook-form";
 
 import { Button } from "../ui/button";
 
@@ -21,50 +26,108 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
-import { Trips } from "@/app/trips/columns";
+// import { Trips } from "@/app/trips/columns";
+import { Driver } from "@/types/drivers";
+import { capitalize, fireSuccessToast } from "@/lib/utils";
+import InputWrapper from "../inputs-wrapper";
+import { Vehicle } from "@/types/vehicles";
+import SelectInput from "../ui/inputs/select-input";
+import { Trip } from "@/types/trips";
+import { createTrip } from "@/service/api.service";
+import { redirects, revalidateTags } from "@/service/action.service";
 
-function CreateDriver() {
+interface Trips {
+  driverId: string;
+  vehicleId: string;
+  distance: number;
+  startDate: any;
+  endDate: any;
+}
+
+function CreateTrip({ drivers }: { drivers?: Driver[] }) {
   const form = useForm<Trips>({});
   const {
     handleSubmit,
     formState: { isDirty },
-    reset,
+    setValue,
+    getValues,
+    watch,
   } = form;
   const [loading, setLoading] = useState(false);
+  const [driver, setDriver] = useState<number>();
+  const [vehiclesList, setVehiclesList] = useState<Vehicle[]>([]);
+
   const router = useRouter();
+  watch();
 
   const onSubmit: SubmitHandler<Trips> = async (data) => {
-    console.log(data);
+    if (!data) return null;
+    const driverId = parseFloat(data.driverId);
+    const vehicleId = parseFloat(data.vehicleId);
+    const distance = Number(data.distance);
+
+    try {
+      await createTrip({ driverId, vehicleId, distance });
+
+      fireSuccessToast("Trip assigned successfully");
+      revalidateTags([`trips`, "drivers", "vehicles"]);
+      redirects("/trips");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const handlerVehicles = () => {
+    if (drivers) {
+      const data: Driver[] = drivers.filter((dri) => dri.id === driver);
+      setVehiclesList(data?.[0]?.vehicles);
+    }
+  };
+
+  useEffect(() => {
+    if (driver) {
+      handlerVehicles();
+    }
+  }, [driver]);
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogHeader>
-          <DialogTitle>New Trip</DialogTitle>
+          <DialogTitle className="text-primary">New Trip</DialogTitle>
         </DialogHeader>
         <Separator className="my-2" />
-        {DRIVER_REGISTER.map(({ name, label, props }) => {
-          const { type, data, required } = props || {};
-
-          return (
-            <FormField
-              key={name}
-              control={form.control}
-              name={name || "ERROR_MISSING_INPUT_NAME"}
-              render={({ field }) => (
-                <FormItem className={"mb-4"}>
-                  <FormLabel className={"font-bold"}>{label}</FormLabel>
-
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          );
-        })}
+        {ASSIGN_DRIVER_OPTIONS(drivers).map(
+          ({ name, label, type, props }: InputType<keyof Driver>) => {
+            return (
+              <FormField
+                key={name}
+                control={form.control}
+                name={"driverId"}
+                render={({ field }) => {
+                  if (field.value) {
+                    setDriver(Number(field.value));
+                  }
+                  return (
+                    <FormItem className={"mb-4"}>
+                      <FormLabel className={"font-bold"}>{label}</FormLabel>
+                      <FormControl>
+                        <>
+                          <InputWrapper type={type} props={props} {...field} />
+                        </>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            );
+          }
+        )}
+        {vehiclesList.length > 0 && (
+          <FormVehicle vehicleOptions={vehiclesList} setValue={setValue} />
+        )}
+        {getValues("vehicleId") && driver && <FormTrip form={form}></FormTrip>}
 
         <div className="mt-6 flex justify-between">
           <Button
@@ -88,39 +151,115 @@ function CreateDriver() {
   );
 }
 
-export const DRIVER_REGISTER: InputType<keyof Trips>[] = [
-  {
-    label: "First name",
-    name: "firstName",
-    props: { type: INPUTS_TYPES.Text, required: true },
-  },
-  {
-    label: "Last name",
-    name: "lastName",
-    props: { type: INPUTS_TYPES.Text, required: true },
-  },
-  // {
-  //   label: "Dni",
-  //   name: "dni",
-  //   props: { type: INPUTS_TYPES.Phone, required: true },
-  // },
+interface FormVehicleProps {
+  vehicleOptions: Vehicle[];
+  setValue: UseFormSetValue<Trips>;
+}
 
-  // {
-  //   label: "License Type",
-  //   name: "licenseType",
-  //   props: {
-  //     type: INPUTS_TYPES.Text,
-  //     required: true,
-  //   },
-  // },
-  // {
-  //   label: "License Expiry",
-  //   name: "licenseExpiry",
-  //   props: {
-  //     type: INPUTS_TYPES.Text,
-  //     required: true,
-  //   },
-  // },
-];
+interface FormTripProps {
+  form: UseFormReturn<Trips>;
+}
 
-export default CreateDriver;
+export const FormVehicle: FC<FormVehicleProps> = ({
+  vehicleOptions,
+  setValue,
+}) => {
+  const handleChange = (e: string) => {
+    if (e) {
+      setValue("vehicleId", e);
+    }
+  };
+
+  const vehicleOpts = vehicleOptions.map((vehicle) => ({
+    value: String(vehicle.id),
+    label: ` ${capitalize(vehicle.brand)} ${capitalize(
+      vehicle.model
+    )} ${vehicle.domain.toUpperCase()}`,
+    name: ` ${capitalize(vehicle.brand)} ${capitalize(
+      vehicle.model
+    )} ${vehicle.domain.toUpperCase()}`,
+  }));
+
+  return (
+    <FormItem className={"mb-4"}>
+      <FormLabel className={"font-bold"}>Select Vehicle</FormLabel>
+      <FormControl>
+        <>
+          <SelectInput
+            key={vehicleOpts?.find((option) => option.name)?.name}
+            options={vehicleOpts}
+            onChange={handleChange}
+          />
+        </>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  );
+};
+
+export const FormTrip: FC<FormTripProps> = ({ form }: FormTripProps) => {
+  return (
+    <>
+      {ASSIGN_TRIPS_OPTIONS().map(
+        ({ name, label, type, props }: InputType<keyof Trip>) => {
+          return (
+            <FormField
+              key={name}
+              control={form.control}
+              name={"distance"}
+              render={({ field }) => {
+                return (
+                  <FormItem className={"mb-4"}>
+                    <FormLabel className={"font-bold"}>{label}</FormLabel>
+                    <FormControl>
+                      <>
+                        <InputWrapper type={type} props={props} {...field} />
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          );
+        }
+      )}
+    </>
+  );
+};
+
+export const ASSIGN_DRIVER_OPTIONS = (
+  drivers?: Driver[]
+): InputType<keyof Driver>[] => {
+  const driverOptions = drivers?.map((driver) => ({
+    value: String(driver.id),
+    label: ` ${capitalize(driver.firstName)} ${capitalize(driver.lastName)}`,
+    name: String(driver.id),
+  }));
+  return [
+    {
+      label: "Select Driver",
+      name: "firstName",
+      type: INPUTS_TYPES.Select,
+      props: {
+        options: driverOptions,
+        required: true,
+      },
+    },
+  ];
+};
+
+export const ASSIGN_TRIPS_OPTIONS = (): InputType<keyof Trip>[] => {
+  return [
+    {
+      label: "Estimated Distance (km)",
+      name: "distance",
+      type: INPUTS_TYPES.Number,
+      props: {
+        required: true,
+      },
+    },
+  ];
+};
+
+export default CreateTrip;

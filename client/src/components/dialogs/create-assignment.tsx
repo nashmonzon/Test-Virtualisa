@@ -53,7 +53,12 @@ function CreateAssignment({ drivers }: { drivers?: Driver[] }) {
 
       await createAssignment({ driverId, vehicleId });
       fireSuccessToast("The vehicle was assigned");
-      revalidateTags(["drivers", "vehicles"]);
+      revalidateTags([
+        `/vehicles/without-driver/${driver}`,
+        "drivers/driver-vehicles",
+        "drivers",
+        "vehicles",
+      ]);
       redirects("/drivers");
     } catch (error) {
       console.error(error);
@@ -125,10 +130,7 @@ function CreateAssignment({ drivers }: { drivers?: Driver[] }) {
           }
         )}
         {driver && vehicleOptions && !loading && (
-          <FormVehicle
-            vehicleOptions={vehicleOptions}
-            setValue={setValue}
-          ></FormVehicle>
+          <FormVehicle vehicleOptions={vehicleOptions} setValue={setValue} />
         )}
         <div className="mt-6 flex justify-between">
           <Button

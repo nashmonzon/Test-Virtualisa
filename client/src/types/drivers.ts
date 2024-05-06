@@ -20,7 +20,7 @@ export interface Driver {
   licenseType: LicenseType;
   licenseExpiry: string;
   kilomiters: number;
-  vehicles: DriverVehicle[];
+  vehicles: Vehicle[];
   trips: Trip[];
 }
 

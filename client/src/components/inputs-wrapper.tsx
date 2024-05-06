@@ -22,5 +22,16 @@ export default function InputWrapper({ type, props, ...field }) {
 
     return <SelectInput options={options} {...field} />;
   }
+  if (type === INPUTS_TYPES.Number) {
+    return (
+      <Input
+        {...props}
+        type="number"
+        min={0}
+        // @ts-expect-error motion
+        onWheel={() => document?.activeElement?.blur()}
+      />
+    );
+  }
   return <Input {...field} />;
 }

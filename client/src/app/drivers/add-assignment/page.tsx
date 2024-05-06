@@ -4,10 +4,7 @@ import { Driver } from "@/types/drivers";
 import { CreateType } from "@/types/enums";
 
 export default async function ProjectDialogPage() {
-  const driverList = getDrivers();
-
-  const [dataDrivers] = await Promise.all([driverList]);
-
+  const dataDrivers = await getDrivers();
   let drivers: Driver[] = [];
 
   if (dataDrivers.success) {

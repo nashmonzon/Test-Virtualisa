@@ -17,7 +17,7 @@ exports.createVehicle = async (
         domain,
         brand,
         model,
-        mileage: 0,
+        kilometers: 0,
         status: VehicleStatus.AVAILABLE,
       },
     });
@@ -50,7 +50,6 @@ exports.getVehicles = async (
       vehicles: vehicles,
       status: 200,
     };
-    console.log(response);
     res.status(200).json(response);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -81,7 +80,6 @@ exports.getVehicle = async (
 
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
@@ -95,7 +93,7 @@ export const getVehiclesWithoutDriver = async (
   res: Response
 ) => {
   const { id } = req.params;
-  console.log(req.params);
+
   try {
     const vehicles = await prisma.vehicle.findMany({
       where: {

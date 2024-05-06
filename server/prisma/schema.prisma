@@ -14,15 +14,15 @@ datasource db {
 }
 
 model Vehicle {
-  id      Int           @id @default(autoincrement())
-  domain  String        @unique
-  brand   String
-  model   String
-  mileage Int
-  status  VehicleStatus
-  drivers Driver[]
-  trips   Trip[]
-  Service Service[]
+  id         Int           @id @default(autoincrement())
+  domain     String        @unique
+  brand      String
+  model      String
+  kilometers Int           @default(0)
+  status     VehicleStatus
+  drivers    Driver[]
+  trips      Trip[]
+  Service    Service[]
 
   @@map("vehicle")
 }

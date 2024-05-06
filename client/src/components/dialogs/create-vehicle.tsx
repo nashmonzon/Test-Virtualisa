@@ -53,7 +53,7 @@ function CreateVehicle() {
         return;
       }
       fireSuccessToast("Vehicle was added!");
-      revalidateTags("vehicles");
+      revalidateTags(["vehicles", "drivers"]);
       redirects("/vehicles");
     } catch (error) {
       console.error(error);
