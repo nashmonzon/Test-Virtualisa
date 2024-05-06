@@ -1,4 +1,4 @@
-import { DriverVehicle } from "./drivers";
+import { Driver, DriverVehicle } from "./drivers";
 import { VehicleStatus } from "./enums";
 import { Service } from "./service";
 import { Trip } from "./trips";
@@ -10,7 +10,7 @@ export interface Vehicle {
   model: string;
   mileage: number;
   status: VehicleStatus;
-  drivers: DriverVehicle[];
+  drivers: Driver[];
   trips: Trip[];
   services: Service[];
 }

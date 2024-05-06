@@ -7,6 +7,7 @@ import {
 } from "@/types/drivers";
 import { fetcher } from "./action.service";
 import { GetVehicles, Vehicle } from "@/types/vehicles";
+import { GetTrips, Trip } from "@/types/trips";
 
 export const getDrivers = () => {
   return fetcher<GetDrivers>("/drivers", {
@@ -26,8 +27,7 @@ export const createDriver = (body: Partial<Driver>) => {
 };
 export const getVehicles = () => {
   return fetcher<GetVehicles>("/vehicles", {
-    next: { tags: ["vehicles", "drivers/add-driver"] },
-    cache: "no-store",
+    next: { tags: ["vehicles", "drivers/add-driver"], revalidate: 86400 },
   });
 };
 
@@ -46,7 +46,22 @@ export const createAssignment = (body: AssignVehicleRequestBody) => {
 };
 
 export const getVehiclesWithoutDriver = (id: string) => {
-  return fetcher<GetVehicles>(`/vehicles/without-driver/${id}`, {
-    cache: "force-cache",
+  return fetcher<GetVehicles>(`/vehicles/without-driver/${id}`);
+};
+
+export const getDriversWithVehicles = () => {
+  return fetcher<GetDrivers>(`/drivers/driver-vehicles`, {
+    next: { tags: ["drivers", "drivers/add-driver"], revalidate: 86400 },
   });
+};
+
+export const createTrip = (body: Partial<Trip>) => {
+  return fetcher<GetTrips>(`/trips`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+
+export const getTrips = () => {
+  return fetcher<GetTrips>(`/trips`);
 };

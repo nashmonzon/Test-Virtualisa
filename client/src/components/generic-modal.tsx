@@ -12,6 +12,7 @@ import CreateVehicle from "./dialogs/create-vehicle";
 import { Driver } from "@/types/drivers";
 import { Vehicle } from "@/types/vehicles";
 import CreateAssignment from "./dialogs/create-assignment";
+import CreateTrip from "./dialogs/create-trip";
 
 interface CreateDialogProps {
   id?: string;
@@ -61,7 +62,7 @@ const DialogContent = ({
     return <CreateVehicle />;
   }
   if (type === CreateType.CreateTrip) {
-    return <CreateVehicle />;
+    return <CreateTrip drivers={drivers} />;
   }
   if (type === CreateType.CreateAssignment) {
     return <CreateAssignment drivers={drivers} />;

@@ -11,3 +11,9 @@ export interface Trip {
   driver: Driver;
   vehicle: Vehicle;
 }
+
+export interface GetTrips {
+  count: number;
+  trips: Trip[];
+  status: number;
+}
