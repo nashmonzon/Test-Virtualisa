@@ -1,20 +1,16 @@
 "use client";
 
+import { Icons } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import SortBtn from "@/components/ui/button-sort";
-import { capitalize } from "@/lib/utils";
+import Tooltip from "@/components/ui/tooltip";
+import { capitalize, fireErrorToast } from "@/lib/utils";
+import { revalidateTags } from "@/service/action.service";
+import { repairCard } from "@/service/api.service";
 import { VehicleStatus } from "@/types/enums";
 import { Vehicle } from "@/types/vehicles";
 import { ColumnDef } from "@tanstack/react-table";
-
-export type Vehicles = {
-  id: string;
-  domain: string;
-  brand: string;
-  model: string;
-  mileage: number;
-  status: string;
-};
 
 export const columns: ColumnDef<Vehicle>[] = [
   {
@@ -54,20 +50,20 @@ export const columns: ColumnDef<Vehicle>[] = [
     },
   },
   {
-    accessorKey: "mileage",
+    accessorKey: "kilometers",
     header: () => {
       return <div className="px-4">Km</div>;
     },
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className=" font-medium">{value.mileage} Km</div>;
+      return <div className=" font-medium">{value.kilometers} Km</div>;
     },
   },
   {
     accessorKey: "status",
-    header: () => {
-      return <div className="px-4">Status</div>;
+    header: ({ column }) => {
+      return <SortBtn label="Status" column={column} />;
     },
     cell: ({ row }) => {
       const value = row.original;
@@ -81,6 +77,40 @@ export const columns: ColumnDef<Vehicle>[] = [
         >
           {value.status}
         </Badge>
+      );
+    },
+  },
+  {
+    header: () => {
+      return <div className="">Repair</div>;
+    },
+    id: "actions",
+    cell: ({ row }) => {
+      const value = row.original;
+
+      const handleRepair = async () => {
+        try {
+          const res = await repairCard(value.id);
+          if (res.success) {
+            revalidateTags(["vehicles"]);
+          }
+        } catch (error) {
+          fireErrorToast(`${error}`);
+        }
+      };
+      return (
+        <>
+          <Tooltip content="Repair the car">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={value.status === VehicleStatus.AVAILABLE}
+              onClick={() => handleRepair()}
+            >
+              <Icons.wrench className="" />
+            </Button>
+          </Tooltip>
+        </>
       );
     },
   },

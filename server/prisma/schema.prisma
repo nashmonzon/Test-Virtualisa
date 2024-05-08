@@ -14,15 +14,15 @@ datasource db {
 }
 
 model Vehicle {
-  id         Int           @id @default(autoincrement())
-  domain     String        @unique
-  brand      String
-  model      String
-  kilometers Int           @default(0)
-  status     VehicleStatus
-  drivers    Driver[]
-  trips      Trip[]
-  Service    Service[]
+  id           Int           @id @default(autoincrement())
+  domain       String        @unique
+  brand        String
+  model        String
+  kilometers   Int           @default(0)
+  status       VehicleStatus
+  serviceCount Int           @default(1)
+  drivers      Driver[]
+  trips        Trip[]
 
   @@map("vehicle")
 }
@@ -43,7 +43,8 @@ model Driver {
 
 model Price {
   id         Int   @id @default(autoincrement())
-  pricePerKm Float
+  pricePerKm Float @default(0.0)
+  day        Int
   month      Int
   year       Int
 
@@ -51,25 +52,17 @@ model Price {
 }
 
 model Trip {
-  id        Int      @id @default(autoincrement())
-  driverId  Int
-  vehicleId Int
-  distance  Float
-  startDate DateTime
-  endDate   DateTime
-  driver    Driver   @relation(fields: [driverId], references: [id])
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  id         Int      @id @default(autoincrement())
+  driverId   Int
+  vehicleId  Int
+  distance   Float
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Float
+  driver     Driver   @relation(fields: [driverId], references: [id])
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
 
   @@map("trip")
-}
-
-model Service {
-  id        Int      @id @default(autoincrement())
-  vehicleId Int
-  date      DateTime
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
-
-  @@map("service")
 }
 
 enum VehicleStatus {

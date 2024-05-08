@@ -19,27 +19,32 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
 import { Driver } from "@/types/drivers";
 import { redirects, revalidateTags } from "@/service/action.service";
 import { createDriver } from "@/service/api.service";
 import InputWrapper from "../inputs-wrapper";
 import { LicenseType } from "@/types/enums";
-import { fireSuccessToast } from "@/lib/utils";
+import { fireErrorToast, fireSuccessToast } from "@/lib/utils";
 
 function CreateDriver() {
   const form = useForm<Driver>({});
-  const {
-    handleSubmit,
-    formState: { isDirty },
-    reset,
-  } = form;
+  const { handleSubmit } = form;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Driver> = async (data) => {
     if (!data) return;
+    const missingFields = DRIVER_REGISTER.filter((field) => {
+      return field.props?.required && !data[field.name];
+    });
+
+    if (missingFields.length > 0) {
+      fireErrorToast("Please fill in all required fields.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const requestBody: Partial<Driver> = {
@@ -51,14 +56,17 @@ function CreateDriver() {
       };
       const res = await createDriver(requestBody);
 
-      if (!res.success) {
-        return;
+      if (res.success) {
+        fireSuccessToast("Driver was added!");
+        revalidateTags("drivers");
+        redirects("/drivers");
+      } else {
+        fireErrorToast(`${res.message}`);
       }
-      fireSuccessToast("Driver was added!");
-      revalidateTags("drivers");
-      redirects("/drivers");
     } catch (error) {
-      console.error(error);
+      fireErrorToast(`${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 

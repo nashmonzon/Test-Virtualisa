@@ -10,6 +10,7 @@ export interface Trip {
   endDate: string;
   driver: Driver;
   vehicle: Vehicle;
+  totalPrice: number;
 }
 
 export interface GetTrips {

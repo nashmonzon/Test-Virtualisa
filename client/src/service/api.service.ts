@@ -6,7 +6,7 @@ import {
   GetDrivers,
 } from "@/types/drivers";
 import { fetcher } from "./action.service";
-import { GetVehicles, Vehicle } from "@/types/vehicles";
+import { GetVehicles, RepairVehicle, Vehicle } from "@/types/vehicles";
 import { GetTrips, Trip } from "@/types/trips";
 
 export const getDrivers = () => {
@@ -63,5 +63,13 @@ export const createTrip = (body: Partial<Trip>) => {
 };
 
 export const getTrips = () => {
-  return fetcher<GetTrips>(`/trips`);
+  return fetcher<GetTrips>(`/trips`, {
+    next: { tags: ["trips", "trips/add-trip"], revalidate: 86400 },
+  });
+};
+
+export const repairCard = (id: number) => {
+  return fetcher<RepairVehicle>(`/vehicles/${id}`, {
+    method: "PATCH",
+  });
 };

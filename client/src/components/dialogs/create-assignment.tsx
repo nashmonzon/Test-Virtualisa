@@ -21,11 +21,11 @@ import {
   createAssignment,
   getVehiclesWithoutDriver,
 } from "@/service/api.service";
-import { capitalize, fireSuccessToast } from "@/lib/utils";
+import { capitalize, fireErrorToast, fireSuccessToast } from "@/lib/utils";
 
 import InputWrapper from "../inputs-wrapper";
 import { Driver, DriverVehicle } from "@/types/drivers";
-import { Vehicle } from "@/types/vehicles";
+
 import SelectInput from "../ui/inputs/select-input";
 
 function CreateAssignment({ drivers }: { drivers?: Driver[] }) {
@@ -41,27 +41,34 @@ function CreateAssignment({ drivers }: { drivers?: Driver[] }) {
 
   const onSubmit: SubmitHandler<DriverVehicle> = async (data) => {
     if (!data) return;
-
+    setLoading(true);
     try {
       const driverId = Number(data.driverId);
       const vehicleId = Number(data.vehicleId);
 
       if (!driverId || !vehicleId) {
-        console.error("Driver or vehicle not found");
+        fireErrorToast("Driver or vehicle not found");
         return;
       }
 
-      await createAssignment({ driverId, vehicleId });
-      fireSuccessToast("The vehicle was assigned");
-      revalidateTags([
-        `/vehicles/without-driver/${driver}`,
-        "drivers/driver-vehicles",
-        "drivers",
-        "vehicles",
-      ]);
-      redirects("/drivers");
+      const res = await createAssignment({ driverId, vehicleId });
+
+      if (res.success) {
+        fireSuccessToast("The vehicle was assigned");
+        revalidateTags([
+          `/vehicles/without-driver/${driver}`,
+          "drivers/driver-vehicles",
+          "drivers",
+          "vehicles",
+        ]);
+        redirects("/drivers");
+      } else {
+        fireErrorToast(`${res.message}`);
+      }
     } catch (error) {
-      console.error(error);
+      fireErrorToast(`${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,7 +92,7 @@ function CreateAssignment({ drivers }: { drivers?: Driver[] }) {
             setVehicleOptions(vehicleOpts);
           }
         } catch (error) {
-          console.error(error);
+          fireErrorToast(`${error}`);
         } finally {
           setLoading(false);
         }
@@ -195,6 +202,10 @@ export const FormVehicle: FC<FormVehicleProps> = ({
       setValue("vehicleId", e);
     }
   };
+
+  if (!vehicleOptions || !vehicleOptions.length) {
+    vehicleOptions = [{ label: "No options", value: "no-options" }];
+  }
   return (
     <FormItem className={"mb-4"}>
       <FormLabel className={"font-bold"}>Select Vehicle</FormLabel>

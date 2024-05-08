@@ -32,7 +32,7 @@ exports.createDriver = async (
     res.status(201).json(response);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") res.status(400).send("Driver already exists");
+      res.status(404).send("Driver already exists");
     } else {
       res.status(500).json({ error: `${error}` });
     }
@@ -44,7 +44,12 @@ exports.getDrivers = async (
   res: Response
 ) => {
   try {
-    const drivers = await prisma.driver.findMany();
+    const drivers = await prisma.driver.findMany({
+      include: {
+        vehicles: true,
+        trips: true,
+      },
+    });
     const response = {
       count: drivers.length,
       drivers: drivers,
@@ -72,6 +77,7 @@ exports.getDriver = async (
       where: { id: Number(id) },
       include: {
         vehicles: true,
+        trips: true,
       },
     });
     const response = {
@@ -120,7 +126,7 @@ exports.assignVehicleToDriver = async (
     });
 
     if (existingAssignment) {
-      res.status(409).send("Driver already has this vehicle assigned");
+      res.status(404).send("Driver already has this vehicle assigned");
       return;
     }
 
@@ -144,7 +150,6 @@ exports.assignVehicleToDriver = async (
     };
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {

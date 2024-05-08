@@ -55,6 +55,4 @@ function SelectInput({ options, ...field }) {
   );
 }
 
-const caca = [{ name: "ignxio" }, { name: "ignxio" }];
-
 export default SelectInput;

@@ -19,7 +19,13 @@ exports.createTrip = async (
   const { driverId, vehicleId, distance } = req.body;
   const startDate = new Date();
 
+  console.log(driverId, vehicleId, distance);
+
   try {
+    if (!driverId || !vehicleId || !distance || distance <= 0) {
+      return res.status(400).send("Invalid request data");
+    }
+
     const driver = await prisma.driver.findUnique({
       where: { id: driverId },
       include: { vehicles: true },
@@ -29,10 +35,20 @@ exports.createTrip = async (
       !driver ||
       !driver.vehicles.some((vehicle: Vehicle) => vehicle.id === vehicleId)
     ) {
-      return res
-        .status(400)
-        .json({ error: "Driver is not associated with the vehicle" });
+      return res.status(404).send("Driver is not associated with the vehicle");
     }
+
+    const latestPrice = await prisma.price.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    if (!latestPrice || latestPrice.pricePerKm <= 0) {
+      return res.status(404).send("Price per kilometer is not available");
+    }
+
+    const totalPrice = latestPrice.pricePerKm * distance;
     const trip = await prisma.trip.create({
       data: {
         driverId,
@@ -40,29 +56,36 @@ exports.createTrip = async (
         distance,
         startDate,
         endDate: startDate,
+        totalPrice,
       },
     });
 
-    await prisma.vehicle.update({
-      where: { id: vehicleId },
-      data: {
-        kilometers: { increment: distance },
-      },
-    });
+    await Promise.all([
+      prisma.vehicle.update({
+        where: { id: vehicleId },
+        data: {
+          kilometers: { increment: distance },
+          trips: { connect: { id: trip.id } },
+        },
+      }),
 
-    await prisma.driver.update({
-      where: { id: driverId },
-      data: {
-        kilometers: { increment: distance },
-      },
-    });
+      prisma.driver.update({
+        where: { id: driverId },
+        data: {
+          kilometers: { increment: distance },
+          trips: { connect: { id: trip.id } },
+        },
+      }),
+    ]);
+    await handleVehicleRepair(vehicleId);
 
     const response = {
       trip: trip,
-      status: 200,
+      status: 201,
     };
     res.status(201).json(response);
   } catch (error) {
+    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
@@ -99,3 +122,18 @@ exports.getTrips = async (
     }
   }
 };
+
+async function handleVehicleRepair(vehicleId: number) {
+  const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
+  const needService = 15000 * vehicle.serviceCount;
+
+  if (vehicle && vehicle.kilometers >= needService) {
+    await prisma.vehicle.update({
+      where: { id: vehicleId },
+      data: {
+        status: "IN_REPAIR",
+        serviceCount: vehicle.serviceCount + 1,
+      },
+    });
+  }
+}

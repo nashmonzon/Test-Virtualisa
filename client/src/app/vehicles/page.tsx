@@ -1,7 +1,7 @@
 import Container from "@/components/ui/container";
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
-import { columns, type Vehicles } from "./columns";
+import { columns } from "./columns";
 import { PageProps } from "@/types/types";
 import { buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
@@ -9,51 +9,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getVehicles } from "@/service/api.service";
 import { Vehicle } from "@/types/vehicles";
-
-async function getData(): Promise<Vehicles[]> {
-  return [
-    {
-      id: "1",
-      domain: "ABC123",
-      brand: "Toyota",
-      model: "Corolla",
-      mileage: 50000,
-      status: "active",
-    },
-    {
-      id: "2",
-      domain: "XYZ456",
-      brand: "Honda",
-      model: "Civic",
-      mileage: 75000,
-      status: "inactive",
-    },
-    {
-      id: "3",
-      domain: "DEF789",
-      brand: "Ford",
-      model: "Focus",
-      mileage: 60000,
-      status: "active",
-    },
-    {
-      id: "4",
-      domain: "GHI012",
-      brand: "Chevrolet",
-      model: "Malibu",
-      mileage: 80000,
-      status: "inactive",
-    },
-    {
-      id: "5",
-      domain: "JKL345",
-      brand: "Nissan",
-      model: "Altima",
-      mileage: 70000,
-      status: "active",
-    },
-  ];
-}
 
 export default async function Vehicles({ searchParams }: PageProps) {
   const res = await getVehicles();

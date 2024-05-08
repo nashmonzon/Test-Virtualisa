@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import NavBar from "@/components/nav-bar";
+
 import { Toaster } from "sonner";
+import { cn } from "@/lib/utils";
 
 const raleway = Raleway({ style: ["italic", "normal"], subsets: ["latin"] });
 
@@ -19,14 +20,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={raleway.className}>
+      <body
+        className={cn(
+          "min-h-screen bg-background antialiased",
+          raleway.className
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NavBar />
           {children}
           <Toaster position="bottom-right" />
         </ThemeProvider>

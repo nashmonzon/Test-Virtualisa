@@ -7,20 +7,17 @@ import { capitalize } from "@/lib/utils";
 import { Driver } from "@/types/drivers";
 import { ColumnDef } from "@tanstack/react-table";
 
-export interface ExtendedDriver extends Driver {
-  status: string;
-}
 enum LicenseType {
   PERSONAL = "PERSONAL",
   PROFESSIONAL = "PROFESSIONAL",
 }
 
 enum Status {
-  PROHIBITED = "Prohibited",
-  ALLOWED = "Allowed",
+  PROHIBITED = "PROHIBITED",
+  ALLOWED = "ALLOWED",
 }
 
-export const columns: ColumnDef<ExtendedDriver>[] = [
+export const columns: ColumnDef<Driver>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
@@ -58,14 +55,14 @@ export const columns: ColumnDef<ExtendedDriver>[] = [
     },
   },
   {
-    accessorKey: "kilomiters",
+    accessorKey: "kilometers",
     header: () => {
-      return <div className="px-4">Total Km</div>;
+      return <div className="">Total Km</div>;
     },
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className=" font-medium">{value.kilomiters ?? 0} KM</div>;
+      return <div className=" font-medium">{value.kilometers ?? 0} KM</div>;
     },
   },
   {
@@ -96,7 +93,7 @@ export const columns: ColumnDef<ExtendedDriver>[] = [
   {
     accessorKey: "status",
     header: () => {
-      return <div className="px-4">Status</div>;
+      return <div className="">Aviable to drive?</div>;
     },
     cell: (row) => {
       const value = row.row.original;
@@ -123,12 +120,9 @@ function getLicenseStatus(
 ): string {
   const currentDate = new Date();
   const licenseExpiryDate = new Date(licenseExpiry);
-
-  // Calculamos la diferencia en milisegundos
   const differenceInMilliseconds =
     currentDate.getTime() - licenseExpiryDate.getTime();
 
-  // Convertimos la diferencia de milisegundos a años
   const differenceInYears =
     differenceInMilliseconds / (1000 * 60 * 60 * 24 * 365);
 

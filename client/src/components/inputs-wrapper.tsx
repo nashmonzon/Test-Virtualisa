@@ -25,7 +25,7 @@ export default function InputWrapper({ type, props, ...field }) {
   if (type === INPUTS_TYPES.Number) {
     return (
       <Input
-        {...props}
+        {...field}
         type="number"
         min={0}
         // @ts-expect-error motion

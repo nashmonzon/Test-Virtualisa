@@ -15,5 +15,7 @@ export default async function DriverDetails({
     return null;
   }
 
-  return <DriverSheet details={res.data.driver} />;
+  const driver = res.data.driver;
+
+  return <DriverSheet details={driver} />;
 }

@@ -8,7 +8,6 @@ router.get("/", vehiclesController.getVehicles);
 router.get("/:id", vehiclesController.getVehicle);
 router.post("/", vehiclesController.createVehicle);
 router.get("/without-driver/:id", vehiclesController.getVehiclesWithoutDriver);
-
-// router.delete("/", vehiclesController.deleteAllDriver);
+router.patch("/:vehicleId", vehiclesController.repairVehicle);
 
 module.exports = router;

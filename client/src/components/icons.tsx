@@ -5,6 +5,8 @@ import {
   SunMedium,
   ArrowUpDown,
   MoreHorizontal,
+  Wrench,
+  DownloadCloud,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -15,17 +17,17 @@ export const Icons = {
   moon: Moon,
   logo: (props: LucideProps) => (
     <Image
-      src={
-        "https://www.virtualisa.com/wp-content/uploads/sites/2/2021/09/logo-virtualisa.png"
-      }
-      //@ts-expect-error SafeNumber wierd error
-      width={100}
-      //@ts-expect-error SafeNumber wierd error
-      height={100}
+      src={"/virtualisa.png"}
+      //@ts-expect-error
+      width={120}
+      //@ts-expect-error
+      height={120}
       alt="Logo"
       {...props}
     />
   ),
   MoreHorizontal: MoreHorizontal,
   arrowSort: ArrowUpDown,
+  wrench: Wrench,
+  downloadCloud: DownloadCloud,
 };

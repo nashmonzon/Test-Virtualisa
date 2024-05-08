@@ -6,8 +6,6 @@ import { capitalize } from "@/lib/utils";
 import { Trip } from "@/types/trips";
 import { ColumnDef } from "@tanstack/react-table";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Trips = {
   id: string;
   startDate: string;
@@ -76,8 +74,9 @@ export const columns: ColumnDef<Trip>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
+      const brand = capitalize(value.vehicle.brand);
 
-      return <div className="p-4 font-medium">{value.vehicle.brand}</div>;
+      return <div className="p-4 font-medium">{brand}</div>;
     },
   },
   {
@@ -88,8 +87,9 @@ export const columns: ColumnDef<Trip>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
+      const model = capitalize(value.vehicle.model);
 
-      return <div className="p-4 font-medium">{value.vehicle.model}</div>;
+      return <div className="p-4 font-medium">{model}</div>;
     },
   },
   {
@@ -100,8 +100,9 @@ export const columns: ColumnDef<Trip>[] = [
 
     cell: ({ row }) => {
       const value = row.original;
+      const domain = value.vehicle.domain.toUpperCase();
 
-      return <div className="p-4 font-medium">{value.vehicle.domain}</div>;
+      return <div className="p-4 font-medium">{domain}</div>;
     },
   },
 ];

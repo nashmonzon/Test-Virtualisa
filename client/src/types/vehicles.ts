@@ -8,7 +8,7 @@ export interface Vehicle {
   domain: string;
   brand: string;
   model: string;
-  mileage: number;
+  kilometers: number;
   status: VehicleStatus;
   drivers: Driver[];
   trips: Trip[];
@@ -23,5 +23,10 @@ export interface GetVehicles {
 
 export interface GetVehicle {
   vehicle: Vehicle;
+  status: number;
+}
+
+export interface RepairVehicle {
+  succes: boolean;
   status: number;
 }

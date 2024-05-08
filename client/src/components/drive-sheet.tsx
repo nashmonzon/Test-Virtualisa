@@ -7,11 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "./ui/sheet";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
-import { Form } from "./ui/form";
-import { useForm } from "react-hook-form";
+import { capitalize } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "./ui/separator";
 import { Driver } from "@/types/drivers";
@@ -21,17 +17,9 @@ function DriverSheet({ details }: { details?: Driver }) {
   if (!details) {
     return null;
   }
+
   const router = useRouter();
   const params = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const form = useForm<any>({
-    defaultValues: details,
-  });
-  const {
-    handleSubmit,
-    formState: { isDirty },
-    reset,
-  } = form;
 
   function handleOpenChange(_open: boolean) {
     if (!_open) {
@@ -50,7 +38,9 @@ function DriverSheet({ details }: { details?: Driver }) {
             <SheetDescription>
               See details for
               <span className="font-bold">
-                {` ${details?.firstName} ${details?.lastName}`}
+                {` ${capitalize(details?.firstName)} ${capitalize(
+                  details?.lastName
+                )}`}
               </span>
             </SheetDescription>
           </SheetHeader>
@@ -60,59 +50,78 @@ function DriverSheet({ details }: { details?: Driver }) {
             <Separator className="my-2" />
             <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
               {Object.entries(details).map(([key, value]) => {
+                if (typeof value === "object") {
+                  return null;
+                }
                 if (key === "id" || !DRIVER[key as keyof typeof DRIVER])
                   return null;
-
+                value =
+                  key === "licenseExpiry"
+                    ? formatDate(value)
+                    : key === "kilometers"
+                    ? `${value} Km`
+                    : capitalize(value);
                 return (
                   <div key={key} className="flex flex-col">
                     <span className="font-bold">
                       {array(key as keyof typeof DRIVER)}:{" "}
+                      <span className="font-normal">{value}</span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {details.vehicles.length > 0 && (
+            <div className="pl-2 mt-6">
+              <h1 className="text-primary">Assigned Vehicles</h1>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
+                {details.vehicles.map((vehicle, index) => (
+                  <div key={index} className="flex flex-col">
+                    <span className="font-bold">
+                      Vehicle:
                       <span className="font-normal">
-                        {DRIVER[key as keyof typeof DRIVER] ===
-                        DRIVER.licenseExpiry
-                          ? formatDate(value)
-                          : value}
+                        {" "}
+                        {`${capitalize(vehicle.brand)} ${capitalize(
+                          vehicle.model
+                        )} ${vehicle.domain.toUpperCase()}`}
+                        {/* Render vehicle details */}
                       </span>
                     </span>
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="pl-2 mt-6">
-            <h1 className="text-primary">Vehicles Details</h1>
-            <Separator className="my-2" />
-            <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
-              {Object.entries(details).map(([key, value]) => {
-                if (key === "id") return null;
-                return (
-                  <div key={key} className="flex flex-col">
-                    <span className="font-bold">
-                      {array(key as keyof typeof DRIVER)}:{" "}
-                      <span className="font-normal">{value}</span>
+          )}
+          {details.trips.length > 0 && (
+            <div className="pl-2 mt-6">
+              <h1 className="text-primary">Trips Stats</h1>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
+                <div className="flex flex-col">
+                  <span className="font-bold">
+                    Total Trips:
+                    <span className="font-normal"> {details.trips.length}</span>
+                  </span>
+                </div>
+
+                <div className="flex flex-col">
+                  <span className="font-bold">
+                    Total Money:
+                    <span className="font-normal">
+                      {" "}
+                      $
+                      {details.trips.reduce(
+                        (total, trip) => total + trip.totalPrice,
+                        0
+                      )}
                     </span>
-                  </div>
-                );
-              })}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="pl-2 mt-6">
-            <h1 className="text-primary">Trips Details</h1>
-            <Separator className="my-2" />
-            <div className="grid grid-cols-2 gap-4 pl-2 mt-4">
-              {Object.entries(details).map(([key, value]) => {
-                if (key === "id") return null;
-                return (
-                  <div key={key} className="flex flex-col">
-                    <span className="font-bold">
-                      {array(key as keyof typeof DRIVER)}:{" "}
-                      <span className="font-normal">{value}</span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          )}
         </SheetContent>
       </Sheet>
     </>
