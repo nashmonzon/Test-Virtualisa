@@ -63,7 +63,6 @@ export default async function Drivers({ searchParams }: PageProps) {
         </div>
       </div>
       <DataTable
-        //@ts-expect-error
         columns={columns}
         data={data}
         filter={"lastName"}

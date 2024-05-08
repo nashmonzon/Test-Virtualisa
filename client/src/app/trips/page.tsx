@@ -3,78 +3,12 @@ import React from "react";
 import { columns, type Trips } from "./columns";
 import Container from "@/components/ui/container";
 import { buttonVariants } from "@/components/ui/button";
-import SearchBar from "@/components/ui/search-bar";
 import { PageProps } from "@/types/types";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getTrips } from "@/service/api.service";
 import { Trip } from "@/types/trips";
-
-async function getData(): Promise<Trips[]> {
-  // Fetch data from your API here.
-  return [
-    {
-      id: "dsajdshakds",
-      startDate: "2024-04-01",
-      distance: 150,
-      firstName: "John",
-      lastName: "Doe",
-      brand: "Toyota",
-      model: "Corolla",
-      domain: "ABC123",
-    },
-    {
-      id: "dsajdsha",
-      startDate: "2024-04-05",
-      distance: 200,
-      firstName: "Jane",
-      lastName: "Smith",
-      brand: "Honda",
-      model: "Civic",
-      domain: "XYZ456",
-    },
-    {
-      id: "dsajdshakd",
-      startDate: "2024-04-10",
-      distance: 180,
-      firstName: "Michael",
-      lastName: "Johnson",
-      brand: "Ford",
-      model: "Fusion",
-      domain: "DEF789",
-    },
-    {
-      id: "dsa",
-      startDate: "2024-04-15",
-      distance: 220,
-      firstName: "Emily",
-      lastName: "Brown",
-      brand: "Chevrolet",
-      model: "Malibu",
-      domain: "GHI012",
-    },
-    {
-      id: "dsajd2",
-      startDate: "2024-04-20",
-      distance: 190,
-      firstName: "Daniel",
-      lastName: "Martinez",
-      brand: "Nissan",
-      model: "Sentra",
-      domain: "JKL345",
-    },
-    {
-      id: "dsa3",
-      startDate: "2024-04-25",
-      distance: 210,
-      firstName: "Sophia",
-      lastName: "Garcia",
-      brand: "Hyundai",
-      model: "Elantra",
-      domain: "MNO678",
-    },
-  ];
-}
+import DownloadList from "@/components/download-list";
 
 export default async function Trips({ searchParams }: PageProps) {
   const res = await getTrips();
@@ -90,7 +24,7 @@ export default async function Trips({ searchParams }: PageProps) {
         <h2 className="page-title text-primary">TRIPS</h2>
         <div className="flex gap-4 items-center">
           <Link
-            href={`/trip/add-trip`}
+            href={`/trips/add-trip`}
             className={cn(
               "capitalize",
               "hover:text-primary-foreground",
@@ -103,7 +37,7 @@ export default async function Trips({ searchParams }: PageProps) {
           >
             New Trip
           </Link>
-          <SearchBar to={`/trips`} placeholder="Search a driver" />
+          <DownloadList />
         </div>
       </div>
       <DataTable

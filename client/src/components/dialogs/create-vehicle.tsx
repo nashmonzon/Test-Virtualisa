@@ -19,44 +19,53 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
-import { type Vehicles } from "@/app/vehicles/columns";
 import { redirects, revalidateTags } from "@/service/action.service";
 import { createVehicle } from "@/service/api.service";
-import { fireSuccessToast } from "@/lib/utils";
-import { toast } from "sonner";
+import { fireErrorToast, fireSuccessToast } from "@/lib/utils";
 import InputWrapper from "../inputs-wrapper";
+import { Vehicle } from "@/types/vehicles";
 
 function CreateVehicle() {
-  const form = useForm<Vehicles>({});
-  const {
-    handleSubmit,
-    formState: { isDirty },
-    reset,
-  } = form;
+  const form = useForm<Vehicle>({});
+  const { handleSubmit } = form;
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<Vehicles> = async (data) => {
+  const onSubmit: SubmitHandler<Vehicle> = async (data) => {
     if (!data) return;
+
+    const missingFields = VEHICLE_REGISTER.filter((field) => {
+      return field.props?.required && !data[field.name];
+    });
+
+    if (missingFields.length > 0) {
+      fireErrorToast("Please fill in all required fields.");
+      return;
+    }
+
+    setLoading(true);
+    const domain = data?.domain?.toLowerCase();
 
     try {
       const requestBody = {
-        domain: data.domain,
+        domain,
         brand: data.brand,
         model: data.model,
       };
       const res = await createVehicle(requestBody);
 
-      if (!res.success) {
-        return;
+      if (res.success) {
+        fireSuccessToast("Vehicle was added!");
+        revalidateTags(["vehicles", "drivers"]);
+        redirects("/vehicles");
+      } else {
+        fireErrorToast(`${res.message}`);
       }
-      fireSuccessToast("Vehicle was added!");
-      revalidateTags(["vehicles", "drivers"]);
-      redirects("/vehicles");
     } catch (error) {
-      console.error(error);
+      fireErrorToast(`${error}`);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -88,16 +97,6 @@ function CreateVehicle() {
         })}
 
         <div className="mt-6 flex justify-between">
-          <button
-            onClick={() =>
-              toast.success("This is a sonner toast", {
-                className: "bg-success text-white",
-              })
-            }
-          >
-            Render my toast
-          </button>
-
           <Button
             size={"sm"}
             onClick={() => router.back()}
@@ -119,7 +118,7 @@ function CreateVehicle() {
   );
 }
 
-export const VEHICLE_REGISTER: InputType<keyof Vehicles>[] = [
+export const VEHICLE_REGISTER: InputType<keyof Vehicle>[] = [
   {
     label: "Plate",
     name: "domain",

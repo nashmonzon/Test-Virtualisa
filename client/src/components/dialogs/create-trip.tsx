@@ -24,11 +24,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/inputs/input";
 import { Separator } from "../ui/separator";
-// import { Trips } from "@/app/trips/columns";
 import { Driver } from "@/types/drivers";
-import { capitalize, fireSuccessToast } from "@/lib/utils";
+import { capitalize, fireErrorToast, fireSuccessToast } from "@/lib/utils";
 import InputWrapper from "../inputs-wrapper";
 import { Vehicle } from "@/types/vehicles";
 import SelectInput from "../ui/inputs/select-input";
@@ -52,6 +50,7 @@ function CreateTrip({ drivers }: { drivers?: Driver[] }) {
     setValue,
     getValues,
     watch,
+    reset,
   } = form;
   const [loading, setLoading] = useState(false);
   const [driver, setDriver] = useState<number>();
@@ -62,25 +61,44 @@ function CreateTrip({ drivers }: { drivers?: Driver[] }) {
 
   const onSubmit: SubmitHandler<Trips> = async (data) => {
     if (!data) return null;
+
+    if (!data.driverId || !data.vehicleId || !data.distance) {
+      fireErrorToast("Please fill in all required fields.");
+      return;
+    }
+    setLoading(true);
+
     const driverId = parseFloat(data.driverId);
     const vehicleId = parseFloat(data.vehicleId);
     const distance = Number(data.distance);
 
     try {
-      await createTrip({ driverId, vehicleId, distance });
-
-      fireSuccessToast("Trip assigned successfully");
-      revalidateTags([`trips`, "drivers", "vehicles"]);
-      redirects("/trips");
+      const res = await createTrip({ driverId, vehicleId, distance });
+      if (res.success) {
+        fireSuccessToast("Trip assigned successfully");
+        revalidateTags(["drivers", "vehicles", "trips", "trips/add-trip"]);
+        redirects("/trips");
+      } else {
+        fireErrorToast(`${res.message}`);
+      }
     } catch (error) {
-      console.log(error);
+      fireErrorToast(`${error}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handlerVehicles = () => {
     if (drivers) {
+      reset({ vehicleId: "" });
       const data: Driver[] = drivers.filter((dri) => dri.id === driver);
-      setVehiclesList(data?.[0]?.vehicles);
+      const filteredVehicles = data?.[0]?.vehicles.filter(
+        (vehicle) => vehicle.status !== "IN_REPAIR"
+      );
+      if (driver !== undefined) {
+        setValue("driverId", String(driver));
+      }
+      setVehiclesList(filteredVehicles);
     }
   };
 
@@ -127,7 +145,14 @@ function CreateTrip({ drivers }: { drivers?: Driver[] }) {
         {vehiclesList.length > 0 && (
           <FormVehicle vehicleOptions={vehiclesList} setValue={setValue} />
         )}
-        {getValues("vehicleId") && driver && <FormTrip form={form}></FormTrip>}
+        {getValues("vehicleId") && driver && vehiclesList.length > 0 && (
+          <FormTrip form={form}></FormTrip>
+        )}
+        {!getValues("vehicleId") && driver && vehiclesList.length === 0 && (
+          <div className="mt-2 text-center">
+            The user has their vehicle in repair
+          </div>
+        )}
 
         <div className="mt-6 flex justify-between">
           <Button

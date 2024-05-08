@@ -27,7 +27,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filter: string;
-  searchBy: string;
+  searchBy?: string;
   href?: string;
 }
 
@@ -56,6 +56,7 @@ export function DataTable<TData, TValue>({
 
   useEffect(() => {
     if (searchBy) {
+      console.log(() => getFilteredRowModel());
       table.getColumn(filter)?.setFilterValue(searchBy);
     } else {
       table.resetColumnFilters();

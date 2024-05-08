@@ -21,6 +21,7 @@ exports.createVehicle = async (
         status: VehicleStatus.AVAILABLE,
       },
     });
+
     const response = {
       vehicle: vehicle,
       status: 200,
@@ -28,11 +29,12 @@ exports.createVehicle = async (
     res.status(200).json(response);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      res.status(400).json({ error: error.message });
+      res.status(404).send("A vehicle with this domain already exists");
     } else {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
+  return;
 };
 
 exports.getVehicles = async (
@@ -43,6 +45,7 @@ exports.getVehicles = async (
     const vehicles = await prisma.vehicle.findMany({
       include: {
         drivers: true,
+        trips: true,
       },
     });
     const response = {
@@ -71,6 +74,7 @@ exports.getVehicle = async (
       where: { id: Number(id) },
       include: {
         drivers: true,
+        trips: true,
       },
     });
     const response = {
@@ -114,6 +118,32 @@ export const getVehiclesWithoutDriver = async (
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching vehicles:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const repairVehicle = async (
+  req: Request<any, any, VehicleRequestBody>,
+  res: Response
+) => {
+  const { vehicleId } = req.params;
+  console.log(vehicleId, req.params);
+
+  try {
+    const vehicles = await prisma.vehicle.update({
+      where: { id: Number(vehicleId) },
+      data: {
+        status: "AVAILABLE",
+      },
+    });
+
+    console.log(vehicles);
+    const response = {
+      success: true,
+      status: 200,
+    };
+    res.status(200).json(response);
+  } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

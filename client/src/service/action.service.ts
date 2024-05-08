@@ -19,7 +19,7 @@ export const fetcher = async <R = unknown>(
   url: string,
   config?: RequestInit
 ): Promise<FetcherResponse<R> | ApiError> => {
-  const { ...restConfig } = config || {};
+  const { ...restConfig } = config || ({} as RequestInit);
   try {
     const res = await fetch(`http://localhost:4000${url}`, {
       headers: {
@@ -43,9 +43,9 @@ export const fetcher = async <R = unknown>(
     }
 
     return { success: true, data };
-  } catch (e) {
-    const error = e as ApiError;
-    return error;
+  } catch (e: unknown) {
+    //@ts-expect-error
+    return { success: false, message: e.message };
   }
 };
 

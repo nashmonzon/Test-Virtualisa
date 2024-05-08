@@ -14,7 +14,7 @@ export default async function ProjectDialogPage() {
   return (
     <GenericModal
       type={CreateType.CreateAssignment}
-      to={"/drivers/add-assignment"}
+      to={"/drivers"}
       drivers={drivers}
     />
   );
