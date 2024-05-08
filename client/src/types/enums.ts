@@ -3,6 +3,7 @@ export enum CreateType {
   CreateVehicle = "create-vehicle",
   CreateTrip = "create-trip",
   CreateAssignment = "create-assignment",
+  CreatePrice = "create-price",
 }
 
 export enum VehicleStatus {
@@ -13,4 +14,9 @@ export enum VehicleStatus {
 export enum LicenseType {
   PERSONAL = "PERSONAL",
   PROFESSIONAL = "PROFESSIONAL",
+}
+
+export enum Status {
+  PROHIBITED = "PROHIBITED",
+  ALLOWED = "ALLOWED",
 }

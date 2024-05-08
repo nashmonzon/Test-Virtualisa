@@ -2,7 +2,7 @@ import Container from "@/components/ui/container";
 import { DataTable } from "@/components/ui/data-table";
 import React from "react";
 import { columns } from "./columns";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import SearchBar from "@/components/ui/search-bar";
 import { PageProps } from "@/types/types";
 import Link from "next/link";
@@ -27,39 +27,40 @@ export default async function Drivers({ searchParams }: PageProps) {
 
   return (
     <Container className="sm:px-5">
-      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
-        <h2 className="page-title text-primary">DRIVERS</h2>
-        <div className="flex gap-4 items-center">
-          <Link
-            href={`/drivers/add-driver`}
-            className={cn(
-              "capitalize",
-              "hover:text-primary-foreground",
-              "bg-[#ac5b96] text-primary-foreground",
-              buttonVariants({
-                size: "sm",
-                variant: "ghost",
-              })
-            )}
-          >
-            Add Driver
-          </Link>
-          <Link
-            href={`/drivers/add-assignment`}
-            className={cn(
-              "capitalize",
-              "hover:text-primary-foreground",
-              "bg-[#ac5b96] text-primary-foreground",
-              buttonVariants({
-                size: "sm",
-                variant: "ghost",
-              })
-            )}
-          >
-            Assign Vehicle
-          </Link>
-
-          <SearchBar to={`/drivers`} placeholder="Search a driver" />
+      <div className="mb-4 flex flex-col items-center justify-between gap-2 sm:flex-row">
+        <h2 className="page-title text-primary">Drivers</h2>
+        <div className="flex gap-4 items-center w-full sm:w-auto sm:flex-row flex-col">
+          <div className="gap-4 flex ">
+            <Link
+              href={`/drivers/add-driver`}
+              className={cn(
+                "capitalize",
+                "hover:text-primary-foreground",
+                "bg-[#ac5b96] text-primary-foreground",
+                buttonVariants({
+                  size: "sm",
+                  variant: "ghost",
+                })
+              )}
+            >
+              Add Driver
+            </Link>
+            <Link
+              href={`/drivers/add-assignment`}
+              className={cn(
+                "capitalize",
+                "hover:text-primary-foreground",
+                "bg-[#ac5b96] text-primary-foreground",
+                buttonVariants({
+                  size: "sm",
+                  variant: "ghost",
+                })
+              )}
+            >
+              Assign Vehicle
+            </Link>
+            <SearchBar to={`/drivers`} placeholder="Search a driver" />
+          </div>
         </div>
       </div>
       <DataTable

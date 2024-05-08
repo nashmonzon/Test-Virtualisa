@@ -20,8 +20,8 @@ export default async function Trips({ searchParams }: PageProps) {
   const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
   return (
     <Container>
-      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
-        <h2 className="page-title text-primary">TRIPS</h2>
+      <div className="mb-4 flex  items-center justify-between gap-2 sm:flex-row">
+        <h2 className="page-title text-primary">Trips</h2>
         <div className="flex gap-4 items-center">
           <Link
             href={`/trips/add-trip`}

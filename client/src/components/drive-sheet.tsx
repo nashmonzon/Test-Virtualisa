@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "./ui/sheet";
-import { capitalize } from "@/lib/utils";
+import { capitalize, formatNumber } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "./ui/separator";
 import { Driver } from "@/types/drivers";
@@ -86,7 +86,6 @@ function DriverSheet({ details }: { details?: Driver }) {
                         {`${capitalize(vehicle.brand)} ${capitalize(
                           vehicle.model
                         )} ${vehicle.domain.toUpperCase()}`}
-                        {/* Render vehicle details */}
                       </span>
                     </span>
                   </div>
@@ -112,9 +111,11 @@ function DriverSheet({ details }: { details?: Driver }) {
                     <span className="font-normal">
                       {" "}
                       $
-                      {details.trips.reduce(
-                        (total, trip) => total + trip.totalPrice,
-                        0
+                      {formatNumber(
+                        details.trips.reduce(
+                          (total, trip) => total + trip.totalPrice,
+                          0
+                        )
                       )}
                     </span>
                   </span>

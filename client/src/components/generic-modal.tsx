@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ import { Driver } from "@/types/drivers";
 import { Vehicle } from "@/types/vehicles";
 import CreateAssignment from "./dialogs/create-assignment";
 import CreateTrip from "./dialogs/create-trip";
+import CreatePrice from "./dialogs/create-price";
 
 interface CreateDialogProps {
   id?: string;
@@ -66,6 +67,9 @@ const DialogContent = ({
   }
   if (type === CreateType.CreateAssignment) {
     return <CreateAssignment drivers={drivers} />;
+  }
+  if (type === CreateType.CreatePrice) {
+    return <CreatePrice />;
   }
 
   return <div>DEFAULT CASE</div>;
