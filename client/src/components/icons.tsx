@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   Wrench,
   DownloadCloud,
+  RefreshCw,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -30,4 +31,5 @@ export const Icons = {
   arrowSort: ArrowUpDown,
   wrench: Wrench,
   downloadCloud: DownloadCloud,
+  refresh: RefreshCw,
 };

@@ -7,7 +7,7 @@ import SortBtn from "@/components/ui/button-sort";
 import Tooltip from "@/components/ui/tooltip";
 import { capitalize, fireErrorToast } from "@/lib/utils";
 import { revalidateTags } from "@/service/action.service";
-import { repairCard } from "@/service/api.service";
+import { repairCar } from "@/service/api.service";
 import { VehicleStatus } from "@/types/enums";
 import { Vehicle } from "@/types/vehicles";
 import { ColumnDef } from "@tanstack/react-table";
@@ -90,9 +90,9 @@ export const columns: ColumnDef<Vehicle>[] = [
 
       const handleRepair = async () => {
         try {
-          const res = await repairCard(value.id);
+          const res = await repairCar(value.id);
           if (res.success) {
-            revalidateTags(["vehicles"]);
+            revalidateTags(["vehicles", "/price/stats", "drivers"]);
           }
         } catch (error) {
           fireErrorToast(`${error}`);

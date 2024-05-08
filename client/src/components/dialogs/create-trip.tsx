@@ -44,14 +44,7 @@ interface Trips {
 
 function CreateTrip({ drivers }: { drivers?: Driver[] }) {
   const form = useForm<Trips>({});
-  const {
-    handleSubmit,
-    formState: { isDirty },
-    setValue,
-    getValues,
-    watch,
-    reset,
-  } = form;
+  const { handleSubmit, setValue, getValues, watch, reset } = form;
   const [loading, setLoading] = useState(false);
   const [driver, setDriver] = useState<number>();
   const [vehiclesList, setVehiclesList] = useState<Vehicle[]>([]);
@@ -76,7 +69,13 @@ function CreateTrip({ drivers }: { drivers?: Driver[] }) {
       const res = await createTrip({ driverId, vehicleId, distance });
       if (res.success) {
         fireSuccessToast("Trip assigned successfully");
-        revalidateTags(["drivers", "vehicles", "trips", "trips/add-trip"]);
+        revalidateTags([
+          "drivers",
+          "vehicles",
+          "trips",
+          "trips/add-trip",
+          "/price/stats",
+        ]);
         redirects("/trips");
       } else {
         fireErrorToast(`${res.message}`);

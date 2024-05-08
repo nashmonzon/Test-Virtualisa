@@ -3,19 +3,10 @@
 import { Badge } from "@/components/ui/badge";
 import SortBtn from "@/components/ui/button-sort";
 import { formatDate } from "@/lib/dates";
-import { capitalize } from "@/lib/utils";
+import { capitalize, getLicenseStatus } from "@/lib/utils";
 import { Driver } from "@/types/drivers";
+import { Status } from "@/types/enums";
 import { ColumnDef } from "@tanstack/react-table";
-
-enum LicenseType {
-  PERSONAL = "PERSONAL",
-  PROFESSIONAL = "PROFESSIONAL",
-}
-
-enum Status {
-  PROHIBITED = "PROHIBITED",
-  ALLOWED = "ALLOWED",
-}
 
 export const columns: ColumnDef<Driver>[] = [
   {
@@ -73,7 +64,11 @@ export const columns: ColumnDef<Driver>[] = [
     cell: ({ row }) => {
       const value = row.original;
 
-      return <div className="p-4 font-medium">{value.licenseType}</div>;
+      return (
+        <div className="p-4 font-medium">
+          {capitalize(value.licenseType.toLowerCase())}
+        </div>
+      );
     },
   },
 
@@ -113,32 +108,3 @@ export const columns: ColumnDef<Driver>[] = [
     },
   },
 ];
-
-function getLicenseStatus(
-  licenseExpiry: string,
-  licenseType: LicenseType
-): string {
-  const currentDate = new Date();
-  const licenseExpiryDate = new Date(licenseExpiry);
-  const differenceInMilliseconds =
-    currentDate.getTime() - licenseExpiryDate.getTime();
-
-  const differenceInYears =
-    differenceInMilliseconds / (1000 * 60 * 60 * 24 * 365);
-
-  let status = "";
-  if (licenseType === LicenseType.PERSONAL) {
-    if (differenceInYears > 1) {
-      status = Status.PROHIBITED;
-    } else {
-      status = Status.ALLOWED;
-    }
-  } else if (licenseType === LicenseType.PROFESSIONAL) {
-    if (differenceInYears > 5) {
-      status = Status.PROHIBITED;
-    } else {
-      status = Status.ALLOWED;
-    }
-  }
-  return status;
-}

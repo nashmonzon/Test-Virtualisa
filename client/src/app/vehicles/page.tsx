@@ -21,8 +21,8 @@ export default async function Vehicles({ searchParams }: PageProps) {
   const searchBy = searchParams?.searchBy ? String(searchParams.searchBy) : "";
   return (
     <Container>
-      <div className="mb-5  flex items-center justify-between gap-2  mt-4">
-        <h2 className="page-title text-primary">VEHICLES</h2>
+      <div className="mb-4 flex flex-col items-center justify-between gap-2 sm:flex-row">
+        <h2 className="page-title text-primary">Vehicles</h2>
         <div className="flex gap-4 items-center">
           <Link
             href={`/vehicles/add-vehicle`}
