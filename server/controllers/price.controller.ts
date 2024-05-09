@@ -13,6 +13,10 @@ exports.createPrice = async (
   res: Response
 ) => {
   const { pricePerKm } = req.body;
+
+  if (!pricePerKm) {
+    return res.status(400).json({ error: "PricePerKm is required" });
+  }
   const currentDate = new Date();
   const day = currentDate.getDate();
   const month = currentDate.getMonth() + 1;
@@ -29,19 +33,19 @@ exports.createPrice = async (
     });
 
     const response = {
-      count: price.lenght,
+      count: price.length,
       price: price,
       status: 201,
     };
     res.status(201).json(response);
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
+  return;
 };
 
 exports.getPrice = async (
@@ -61,7 +65,6 @@ exports.getPrice = async (
 
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
@@ -83,7 +86,6 @@ exports.getPrices = async (
 
     res.status(200).json(response);
   } catch (error) {
-    console.log(error);
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       res.status(400).json({ error: error.message });
     } else {
@@ -102,7 +104,7 @@ exports.gatStats = async (
         id: "desc",
       },
     });
-
+    const price = lastPrice ? lastPrice.pricePerKm : 0;
     const trips = await prisma.trip.findMany();
 
     const repairVehicleCount = await prisma.vehicle.count({
@@ -125,7 +127,7 @@ exports.gatStats = async (
     });
 
     const response = {
-      lastPrice: lastPrice.pricePerKm,
+      lastPrice: price,
       trips,
       repairVehicleCount,
       unableToDriveCount,
