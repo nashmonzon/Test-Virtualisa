@@ -47,26 +47,23 @@ export const formatNumber = (number: number) => {
 };
 
 export function getLicenseStatus(
-  licenseExpiry: string,
+  licenseIssuedDate: string,
   licenseType: LicenseType
 ): string {
   const currentDate = new Date();
-  const licenseExpiryDate = new Date(licenseExpiry);
-  const differenceInMilliseconds =
-    currentDate.getTime() - licenseExpiryDate.getTime();
-
-  const differenceInYears =
-    differenceInMilliseconds / (1000 * 60 * 60 * 24 * 365);
+  const issuedDate = new Date(licenseIssuedDate);
+  const differenceInMilliseconds = currentDate.getTime() - issuedDate.getTime();
+  const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
   let status = "";
   if (licenseType === LicenseType.PERSONAL) {
-    if (differenceInYears > 1) {
+    if (differenceInDays > 365) {
       status = Status.PROHIBITED;
     } else {
       status = Status.ALLOWED;
     }
   } else if (licenseType === LicenseType.PROFESSIONAL) {
-    if (differenceInYears > 5) {
+    if (differenceInDays > 1825) {
       status = Status.PROHIBITED;
     } else {
       status = Status.ALLOWED;

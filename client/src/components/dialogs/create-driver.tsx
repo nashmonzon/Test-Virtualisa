@@ -52,7 +52,7 @@ function CreateDriver() {
         lastName: data.lastName,
         dni: data.dni,
         licenseType: data.licenseType,
-        licenseExpiry: data.licenseExpiry,
+        licenseIssuedDate: data.licenseIssuedDate,
       };
       const res = await createDriver(requestBody);
 
@@ -161,8 +161,8 @@ export const DRIVER_REGISTER: InputType<keyof Driver>[] = [
     },
   },
   {
-    label: "License Expiry",
-    name: "licenseExpiry",
+    label: "License Issued",
+    name: "licenseIssuedDate",
     type: INPUTS_TYPES.Date,
     props: {
       required: true,
