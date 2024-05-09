@@ -45,7 +45,7 @@ npm install
 docker-compose up -d
 ```
 
-Create a `.env` file in the root of the project and add the following variables:
+Create a `.env` file in the server side of the project and add the following variables:
 ```bash
 # Environment variables declared in this file are automatically made available to Prisma.
 # See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
