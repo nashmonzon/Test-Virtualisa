@@ -11,6 +11,9 @@ const raleway = Raleway({ style: ["italic", "normal"], subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Virtualisa - Cars",
   description: "Efficient fleet management for Virtualisa-cars",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
