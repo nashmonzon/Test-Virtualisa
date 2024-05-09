@@ -10,10 +10,14 @@ import { GetVehicles, RepairVehicle, Vehicle } from "@/types/vehicles";
 import { GetTrips, Trip } from "@/types/trips";
 import { GetPrice, GetStats, Price } from "@/types/price";
 
+const ONE_DAY = 86400;
+const IN_MOMENT = 3;
+
+const revalidate = () => {};
 //GET
 export const getDrivers = () => {
   return fetcher<GetDrivers>("/drivers", {
-    next: { tags: ["drivers", "drivers/add-driver"], revalidate: 3 },
+    next: { tags: ["drivers", "drivers/add-driver"], revalidate: ONE_DAY },
   });
 };
 
@@ -23,7 +27,7 @@ export const getDriver = (id: string) => {
 
 export const getVehicles = () => {
   return fetcher<GetVehicles>("/vehicles", {
-    next: { tags: ["vehicles", "drivers/add-driver"], revalidate: 86400 },
+    next: { tags: ["vehicles", "drivers/add-driver"], revalidate: ONE_DAY },
   });
 };
 
@@ -33,23 +37,25 @@ export const getVehiclesWithoutDriver = (id: string) => {
 
 export const getDriversWithVehicles = () => {
   return fetcher<GetDrivers>(`/drivers/driver-vehicles`, {
-    next: { tags: ["drivers", "drivers/add-driver"], revalidate: 86400 },
+    next: { tags: ["drivers", "drivers/add-driver"], revalidate: ONE_DAY },
   });
 };
 
 export const getTrips = () => {
   return fetcher<GetTrips>(`/trips`, {
-    next: { tags: ["trips", "/trips/add-trip"], revalidate: 86400 },
+    next: { tags: ["trips", "/trips/add-trip"], revalidate: ONE_DAY },
   });
 };
 
 export const getPrice = () => {
-  return fetcher<GetPrice>(`/price`);
+  return fetcher<GetPrice>(`/price`, {
+    next: { tags: ["price", "/price/stats"], revalidate: ONE_DAY },
+  });
 };
 
 export const gatStats = () => {
   return fetcher<GetStats>(`/price/stats`, {
-    next: { tags: ["/price/stats", "price"], revalidate: 86400 },
+    next: { tags: ["/price/stats", "price"], revalidate: ONE_DAY },
   });
 };
 
