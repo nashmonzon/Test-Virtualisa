@@ -56,7 +56,7 @@ function DriverSheet({ details }: { details?: Driver }) {
                 if (key === "id" || !DRIVER[key as keyof typeof DRIVER])
                   return null;
                 value =
-                  key === "licenseExpiry"
+                  key === "licenseIssuedDate"
                     ? formatDate(value)
                     : key === "kilometers"
                     ? `${value} Km`
@@ -134,7 +134,7 @@ enum DRIVER {
   dni = "DNI",
   kilometers = "Distance",
   licenseType = "License Type",
-  licenseExpiry = "License Expiry",
+  licenseIssuedDate = "License Issued",
 }
 
 const array = (key: keyof typeof DRIVER) => {

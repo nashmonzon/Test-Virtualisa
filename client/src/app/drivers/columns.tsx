@@ -73,7 +73,7 @@ export const columns: ColumnDef<Driver>[] = [
   },
 
   {
-    accessorKey: "licenseExpiry",
+    accessorKey: "licenseIssuedDate",
     header: () => {
       return <div className="px-4">License Expiry</div>;
     },
@@ -81,7 +81,9 @@ export const columns: ColumnDef<Driver>[] = [
       const value = row.original;
 
       return (
-        <div className="p-4 font-medium">{formatDate(value.licenseExpiry)}</div>
+        <div className="p-4 font-medium">
+          {formatDate(value.licenseIssuedDate)}
+        </div>
       );
     },
   },
@@ -93,7 +95,10 @@ export const columns: ColumnDef<Driver>[] = [
     cell: (row) => {
       const value = row.row.original;
 
-      const status = getLicenseStatus(value.licenseExpiry, value.licenseType);
+      const status = getLicenseStatus(
+        value.licenseIssuedDate,
+        value.licenseType
+      );
 
       return (
         <Badge

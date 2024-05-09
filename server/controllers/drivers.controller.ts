@@ -13,7 +13,7 @@ exports.createDriver = async (
   req: Request<any, any, DriverRequestBody>,
   res: Response
 ) => {
-  const { firstName, lastName, dni, licenseExpiry, licenseType } = req.body;
+  const { firstName, lastName, dni, licenseIssuedDate, licenseType } = req.body;
 
   try {
     const driver = await prisma.driver.create({
@@ -21,7 +21,7 @@ exports.createDriver = async (
         firstName,
         lastName,
         dni,
-        licenseExpiry,
+        licenseIssuedDate,
         licenseType,
       },
     });

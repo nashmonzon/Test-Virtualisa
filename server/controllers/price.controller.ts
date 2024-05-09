@@ -118,7 +118,7 @@ exports.gatStats = async (
     let unableToDriveCount = 0;
     drivers.forEach((driver: Driver) => {
       const status = getLicenseStatus(
-        new Date(driver.licenseExpiry),
+        new Date(driver.licenseIssuedDate),
         driver.licenseType
       );
       if (status === "PROHIBITED") {
@@ -147,25 +147,25 @@ exports.gatStats = async (
 };
 
 export function getLicenseStatus(
-  licenseExpiry: Date,
+  licenseIssuedDate: Date,
   licenseType: LicenseType
 ): string {
   const currentDate = new Date();
-  const licenseExpiryDate = new Date(licenseExpiry);
   const differenceInMilliseconds =
-    currentDate.getTime() - licenseExpiryDate.getTime();
-  const differenceInYears =
-    differenceInMilliseconds / (1000 * 60 * 60 * 24 * 365);
+    currentDate.getTime() - licenseIssuedDate.getTime();
+  const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
   let status = "";
   if (licenseType === "PERSONAL") {
-    if (differenceInYears > 1) {
+    if (differenceInDays > 365) {
+      // Si han pasado más de 365 días desde la emisión
       status = "PROHIBITED";
     } else {
       status = "ALLOWED";
     }
   } else if (licenseType === "PROFESSIONAL") {
-    if (differenceInYears > 5) {
+    if (differenceInDays > 365 * 5) {
+      // Si han pasado más de 5 años (365 días * 5) desde la emisión
       status = "PROHIBITED";
     } else {
       status = "ALLOWED";
