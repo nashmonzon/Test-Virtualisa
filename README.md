@@ -19,28 +19,28 @@ Welcome to Virtualisa Car, where fleet management is made simple and efficient!
 **To run the app locally it is necesary to have:**
 
 **System Requirements:**
-Docker installed on your system.
-Node.js installed on your system.
+- Docker installed on your system.
+- Node.js installed on your system.
 
 **Steps to Clone the Repository:**
-Open your terminal and navigate to the folder where you want to clone the repository.
-Run the following command:
+- Open your terminal and navigate to the folder where you want to clone the repository.
+- Run the following command:
 ```bash
 git clone git@github.com:nashmonzon/Test-Virtualisa.git
 ```
 
 **Frontend Setup:**
-Navigate to the client folder inside the cloned repository.
-Open a new terminal in this location.
-Run the following command to install the frontend dependencies:
+- Navigate to the client folder inside the cloned repository.
+- Open a new terminal in this location.
+- Run the following command to install the frontend dependencies:
 ```bash
 npm install
 ```
 
 **Start Docker Container for Database and Backend:**
-Make sure Docker is running.
-In the root of the cloned repository, open a new terminal.
-Run the following command to start the Docker containers:
+- Make sure Docker is running.
+- In the root of the cloned repository, open a new terminal.
+- Run the following command to start the Docker containers:
 ```bash
 docker-compose up -d
 ```
@@ -57,8 +57,8 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=publ
 ```
 
 **Run the Application:**
-Open a new terminal in the root of the cloned repository.
-Run the following command to start the frontend and backend:
+- Open a new terminal in the root of the cloned repository.
+- Run the following command to start the frontend and backend:
 ```bash
 npm run dev
 ```
